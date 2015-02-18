@@ -1,0 +1,16 @@
+# vim:ft=sh
+#!/bin/bash
+
+_DEB_RELEASE="wheezy"					# stable | testing | unstable | jessie | wheezy | squeeze, ...
+_APT_SOURCE="${_APT_SOURCE_RASPBIAN}"
+
+_HOSTNAME="hypriot-pi"
+_NET_CONFIG="dhcp"
+
+_USER_NAME="root"
+_USER_PASS="hypriot"
+
+_KEYMAP="us"
+_TIMEZONE="Europe/Berlin"
+_LOCALES="en_US"
+_ENCODING="UTF-8"
