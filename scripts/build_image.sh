@@ -479,8 +479,8 @@ umount -l ${rootfs}/dev
 umount -l ${rootfs}/sys
 umount -l ${rootfs}/proc
 umount -l ${bootp}
-umount -l ${rootfs}/usr/src/docker
-umount -l ${rootfs}/usr/src/kernel
+umount -l ${rootfs}/var/pkg/docker
+umount -l ${rootfs}/var/pkg/kernel
 umount -l ${rootfs}
 
 sync
