@@ -6,13 +6,6 @@ export LC_ALL="C"
 BUILD_ROOT="/vagrant"
 SETTINGS_PROFILE="hypriot"
 
-KERNEL_DEBS="raspberrypi-bootloader_20150218-174214_armhf.deb \
-             libraspberrypi0_20150218-174214_armhf.deb        \
-             libraspberrypi-dev_20150218-174214_armhf.deb     \
-             libraspberrypi-bin_20150218-174214_armhf.deb     \
-             libraspberrypi-doc_20150218-174214_armhf.deb     \
-            "
-
 DOCKER_DEB="docker-1.5.0-armhf.deb"
 
 # locate path of RPi kernel
@@ -27,6 +20,7 @@ _APT_SOURCE_DEBIAN="ftp://ftp.debian.org/debian"
 _APT_SOURCE_DEBIAN_CDN="http://http.debian.net/debian"
 _APT_SOURCE_RASPBIAN="http://mirror.netcologne.de/raspbian/raspbian"
 #_APT_SOURCE_RASPBIAN="http://archive.raspbian.org/raspbian"
+_USE_CACHE="yes"
 
 _FSTAB="
 proc			/proc	proc	defaults	0	0
@@ -70,9 +64,19 @@ _ENCODING=""
 ###############################################################################
 # Apply-Functions
 
+
+# using apt-get not only make it faster but
+# also guards against ip6
+# http://unix.stackexchange.com/questions/9940/convince-apt-get-not-to-use-ipv6-method
 get_apt_source_mirror_url () {
-	echo "${_APT_SOURCE}"
+	if [ "${_USE_CACHE}" = "no" ]; then
+		echo "${_APT_SOURCE}"
+	else
+		HTTP="http://"
+		echo -n "http://localhost:3142/${_APT_SOURCE#${HTTP}}"
+	fi
 }
+
 
 get_apt_sources_first_stage () {
 
@@ -197,30 +201,21 @@ p
 w
 EOF
 
-fdisk -l ${DEVICE}
+fdisk -l $DEVICE
 
-losetup -d ${DEVICE}
+losetup -d $DEVICE
 DEVICE=`kpartx -va ${IMAGE_PATH} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
 bootp="/dev/mapper/${DEVICE}p1"
 rootp="/dev/mapper/${DEVICE}p2"
 DEVICE="/dev/${DEVICE}"
 
-if [ -r /usr/lib/libeatmydata/libeatmydata.so ]; then
-  # much faster package installation
-  export LD_PRELOAD=/usr/lib/libeatmydata/libeatmydata.so
-fi
-
-
 # Give some time to system to refresh
 sleep 3
 
 # create file systems
-echo $bootp
 mkfs.vfat ${bootp}
-echo $rootp
 mkfs.ext4 ${rootp}
 
-e2fsck -fDvp ${rootp}
 #######################################
 
 set -e
@@ -233,17 +228,17 @@ mkdir -p ${rootfs}/proc
 mkdir -p ${rootfs}/sys
 mkdir -p ${rootfs}/dev
 mkdir -p ${rootfs}/dev/pts
-mkdir -p ${rootfs}/usr/src/kernel
-mkdir -p ${rootfs}/usr/src/docker
+mkdir -p ${rootfs}/var/pkg/kernel
+mkdir -p ${rootfs}/var/pkg/docker
 
 mount -t proc none ${rootfs}/proc
 mount -t sysfs none ${rootfs}/sys
 mount -o bind /dev ${rootfs}/dev
 mount -o bind /dev/pts ${rootfs}/dev/pts
-mount -o bind ${kernel_path} ${rootfs}/usr/src/kernel
-mount -o bind ${docker_path} ${rootfs}/usr/src/docker
+mount -o bind ${kernel_path} ${rootfs}/var/pkg/kernel
+mount -o bind ${docker_path} ${rootfs}/var/pkg//docker
 
-cd ${rootfs}
+cd $rootfs
 
 #######################################
 # Start installation of base system
@@ -402,16 +397,16 @@ apt-get -y install rng-tools
 
 
 echo "***** Installing HyprIoT kernel *****"
-for pkg in $KERNEL_DEBS; do
-  dpkg -i /usr/src/kernel/$pkg
-done
+dpkg -i /var/pkg/kernel/raspberrypi-bootloader_20150218-174214_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi0_20150218-174214_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-dev_20150218-174214_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-bin_20150218-174214_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-doc_20150218-174214_armhf.deb
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT docker *****"
-
-dpkg -i /usr/src/kernel/$DOCKER_DEB
+dpkg -i /var/pkg/docker/${DOCKER_DEB}
 echo "***** HyprIoT docker installed *****"
-
 
 echo \"${_USER_NAME}:${_USER_PASS}\" | chpasswd
 sed -i -e 's/KERNEL\!=\"eth\*|/KERNEL\!=\"/' /lib/udev/rules.d/75-persistent-net-generator.rules
@@ -496,4 +491,5 @@ echo "Info: Created image ${IMAGE_PATH}."
 
 echo "Info: Done."
 
+cp $IMAGE_PATH /vagrant/build_results
 exit ${SUCCESS}

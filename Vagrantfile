@@ -33,12 +33,15 @@ Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.synced_folder ".", "/vagrant"
   config.vm.define "rpi-image-builder" do |config|
+    config.vm.network "private_network", ip: "192.168.50.4"
     config.vm.hostname = "rpi-image-builder"
     config.ssh.forward_agent = true
     config.vm.provision "shell", path: "scripts/provision.sh", privileged: true
     config.vm.provider "virtualbox" do |vb|
        # find out on which host os we are running
        host = RbConfig::CONFIG['host_os']
+       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+       vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
        vb.customize ["modifyvm", :id, "--ioapic", "on"]
        vb.memory = get_memory_setting(host)
        vb.cpus = get_cpu_setting(host)
