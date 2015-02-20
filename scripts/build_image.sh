@@ -59,7 +59,7 @@ _ENCODING=""
 
 ########################################
 # Overwrite variables with profile settings
-. "../settings/${SETTINGS_PROFILE}"
+. "$RPI_IMAGE_BUILDER_ROOT/settings/${SETTINGS_PROFILE}"
 
 
 
