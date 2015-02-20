@@ -1,0 +1,33 @@
+# The following variables have to be defined in the GUI
+# of the Drone Buildserver
+#
+# RPI_IMAGE_BUILDER_ROOT: /builder
+# BUILD_RESULTS: /build_result
+#
+# For uploading the build results to Amazon S3
+# we need the follwing Amazon S3 credentials
+#
+# AWS_ACCESS_KEY_ID: your_aws_key
+# AWS_SECRET_ACCESS_KEY: your_secret_access_key
+# AWS_REGION: your_aws_region
+#
+image: ubuntu:14.04
+
+git:
+  path: github.com/hypriot/rpi-image-builder
+
+script:
+  - scripts/prepare_build_environment.sh
+  - scripts/fetch_build_inputs.sh
+  - scripts/build_image.sh
+
+publish:
+  s3:
+    acl: public-read
+    region: eu-central-1
+    bucket: buildserver-production
+    access_key: $$AWS_KEY
+    secret_key: $$AWS_SECRET
+    source: $$BUILD_RESULTS/
+    target: images/
+    recursive: true
