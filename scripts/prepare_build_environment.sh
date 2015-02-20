@@ -3,7 +3,10 @@
 
 # get the most recent package information
 # if the last update is more than 24h ago
-if [ "$[$(date +%s) - $(stat -c %Z /var/lib/apt/periodic/update-success-stamp)]" -ge 86400 ]; then
+last_access=$(stat -c %Z /var/lib/apt/periodic/update-success-stamp)
+last_access=${last_access:-0}
+
+if [ "$[$(date +%s) - $last_access]" -ge 86400 ]; then
   sudo apt-get update
 fi
 
