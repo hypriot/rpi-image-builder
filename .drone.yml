@@ -16,6 +16,8 @@ git:
   path: github.com/hypriot/rpi-image-builder
 
 script:
+  - printenv
+  - echo `pwd`
   - scripts/prepare_build_environment.sh
   - scripts/fetch_build_inputs.sh
   - scripts/build_image.sh
