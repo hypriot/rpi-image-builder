@@ -3,14 +3,16 @@
 set -e
 
 export LC_ALL="C"
-BUILD_ROOT="/vagrant"
+RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
+DOCKER_DEB=${DOCKER_DEB:="docker-1.5.0-armhf.deb"}
+BUILD_ENV=${BUILD_ENV:="/build_env"}
+BUILD_RESULTS=${BUILD_RESULTSS:="/vagrant/build_results"}
+
 SETTINGS_PROFILE="hypriot"
 
-DOCKER_DEB="docker-1.5.0-armhf.deb"
-
 # locate path of RPi kernel
-kernel_path="$BUILD_ROOT/build_inputs/kernel"
-docker_path="$BUILD_ROOT/build_inputs/docker"
+kernel_path="$RPI_IMAGE_BUILDER_ROOT/build_inputs/kernel"
+docker_path="$RPI_IMAGE_BUILDER_ROOT/build_inputs/docker"
 
 
 # settings
@@ -57,7 +59,7 @@ _ENCODING=""
 
 ########################################
 # Overwrite variables with profile settings
-. "${BUILD_ROOT}/settings/${SETTINGS_PROFILE}"
+. "${RPI_IMAGE_BUILDER_ROOT}/settings/${SETTINGS_PROFILE}"
 
 
 
@@ -156,27 +158,18 @@ iface eth0 inet6 auto
 #######################################
 ## Prepare bootstrap env
 
-# locate path of this script
-absolute_path=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-
-echo $absolute_path
-
 # define destination folder where created image file will be stored
-#buildenv=`cd ${absolute_path}; cd ../build_results; pwd`
-buildenv='/builder'
-echo $buildenv
-mkdir -p $buildenv/images
+mkdir -p ${BUILD_ENV}
+mkdir -p $BUILD_ENV/images
 
-cd ${absolute_path}
-
-rootfs="${buildenv}/rootfs"
+cd $BUILD_ENV
+rootfs="${BUILD_ENV}/rootfs"
 bootfs="${rootfs}/boot"
 
 BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 IMAGE_PATH=""
-mkdir -p ${buildenv}
-IMAGE_PATH="${buildenv}/images/${SETTINGS_PROFILE}-${BUILD_TIME}.img"
+IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}.img"
 dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024	# TODO: Decrease value or shrink at the end
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
@@ -491,5 +484,6 @@ echo "Info: Created image ${IMAGE_PATH}."
 
 echo "Info: Done."
 
-cp $IMAGE_PATH /vagrant/build_results
+cp $IMAGE_PATH $BUILD_RESULTS/
+
 exit ${SUCCESS}
