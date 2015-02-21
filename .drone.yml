@@ -21,6 +21,9 @@ script:
   - scripts/prepare_build_environment.sh
   - service apt-cacher-ng start
   - update-binfmts --enable qemu-arm
+  - update-binfmts --display
+  - mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+  - update-binfmts --display
   - scripts/fetch_build_inputs.sh
   - scripts/build_image.sh
 
