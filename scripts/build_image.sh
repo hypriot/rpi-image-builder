@@ -484,6 +484,7 @@ echo "Info: Created image ${IMAGE_PATH}."
 
 echo "Info: Done."
 
+mkdir -p $BUILD_RESULTS
 cp $IMAGE_PATH $BUILD_RESULTS/
 
 exit ${SUCCESS}
