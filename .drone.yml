@@ -18,10 +18,9 @@ git:
 
 script:
   - printenv
-  - echo `pwd`
   - scripts/prepare_build_environment.sh
   - service apt-cacher-ng start
-  - ps aux | grep apt
+  - update-binfmts --enable qemu-arm
   - scripts/fetch_build_inputs.sh
   - scripts/build_image.sh
 
