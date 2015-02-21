@@ -6,6 +6,7 @@ set -e
 
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150221-190136"}
 DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
@@ -395,11 +396,11 @@ apt-get -y install rng-tools
 
 
 echo "***** Installing HyprIoT kernel *****"
-dpkg -i /var/pkg/kernel/raspberrypi-bootloader_20150218-231723_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi0_20150218-231723_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-dev_20150218-231723_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-bin_20150218-231723_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-doc_20150218-231723_armhf.deb
+dpkg -i /var/pkg/kernel/raspberrypi-bootloader_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi0_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-dev_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-bin_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-doc_${KERNEL_DATE_TIME}_armhf.deb
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT docker *****"
