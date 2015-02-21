@@ -15,13 +15,13 @@ image: hypriot/builder_base
 git:
   path: github.com/hypriot/rpi-image-builder
 
-services:
-  - apt-cacher-ng
 
 script:
   - printenv
   - echo `pwd`
   - scripts/prepare_build_environment.sh
+  - service apt-cacher-ng start
+  - ps aux | grep apt
   - scripts/fetch_build_inputs.sh
   - scripts/build_image.sh
 
