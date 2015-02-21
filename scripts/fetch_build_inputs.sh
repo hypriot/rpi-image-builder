@@ -14,6 +14,6 @@ mkdir -p $BUILD_INPUTS/docker
 # fetch packages and drop them into our target directory
 for pkg in $PACKAGES; do
   if [ ! -f $BUILD_INPUTS/$pkg ]; then
-    AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY aws s3 --region eu-central-1 cp s3://buildserver-production/$pkg $BUILD_INPUTS/$(basename "$pkg")
+    aws s3 --region eu-central-1 cp s3://buildserver-production/$pkg $BUILD_INPUTS/$(basename "$pkg")
   fi
 done
