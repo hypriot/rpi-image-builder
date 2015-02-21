@@ -1,5 +1,7 @@
 #!/bin/bash
 #set -x
+alias apt-get='apt-fast'
+
 set -e
 
 export LC_ALL="C"
