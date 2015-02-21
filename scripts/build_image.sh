@@ -358,6 +358,9 @@ echo "#!/bin/bash
 debconf-set-selections /debconf.set
 rm -f /debconf.set
 
+# make dpkg run faster
+echo 'force-unsafe-io' | sudo tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
+
 apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
