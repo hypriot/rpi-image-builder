@@ -4,8 +4,8 @@ BUILD_INPUTS=$RPI_IMAGE_BUILDER_ROOT/build_inputs
 
 # provide the name of the packages that should be fetched here
 KERNEL_PACKAGES="kernel/libraspberrypi-bin_20150218-231723_armhf.deb kernel/libraspberrypi-dev_20150218-231723_armhf.deb kernel/libraspberrypi-doc_20150218-231723_armhf.deb kernel/libraspberrypi0_20150218-231723_armhf.deb kernel/raspberrypi-bootloader_20150218-231723_armhf.deb"
-DOCERK_PACKAGES="docker/deb/docker_1.5.0hypriot-1_armhf.deb"
-PACKAGES="$KERNEL_PACKAGES $DOCERK_PACKAGES"
+DOCKER_PACKAGES="docker/deb/docker_1.5.0hypriot-1_armhf.deb"
+PACKAGES="$KERNEL_PACKAGES $DOCKER_PACKAGES"
 
 # ensure that the target directories exist
 mkdir -p $BUILD_INPUTS/kernel
