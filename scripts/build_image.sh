@@ -467,10 +467,12 @@ for rootpath in /proc/*/root; do
 	fi
 done
 
-echo `pwd`
+# make sure we are not anymore in any mounted directory
+# else we might get a device busy error later when
+# we want to unmap the loopback device with kpartx
 cd /
-echo "### Unmounting"
 
+echo "### Unmounting"
 umount -l ${rootfs}/dev/pts
 umount -l ${rootfs}/dev
 umount -l ${rootfs}/sys
@@ -483,13 +485,13 @@ umount -l ${rootfs}
 sync
 sleep 5
 
-echo $IMAGE_PATH
+echo "### remove dev mapper devices for image partitions"
 kpartx -vds ${IMAGE_PATH}
-echo "Info: Created image ${IMAGE_PATH}."
 
-echo "Info: Done."
-
+echo "### copy $IMAGE_PATH to $BUILD_RESULTS directory."
 mkdir -p $BUILD_RESULTS
 cp $IMAGE_PATH $BUILD_RESULTS/
+
+echo "### Created image ${IMAGE_PATH}."
 
 exit ${SUCCESS}
