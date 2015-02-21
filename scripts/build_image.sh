@@ -6,7 +6,7 @@ set -e
 
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-DOCKER_DEB=${DOCKER_DEB:="docker-1.5.0-armhf.deb"}
+DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
 
@@ -128,7 +128,7 @@ iface eth0 inet6 auto
 				;;
 
 		"static")
-			if [ -z ${_NET_ADDRESS} ] || [ -z ${_NET_NETMASK} ] || [ -z ${_NET_GATEWAY} ]; then 
+			if [ -z ${_NET_ADDRESS} ] || [ -z ${_NET_NETMASK} ] || [ -z ${_NET_GATEWAY} ]; then
 				echo "Error on set_network_config: 'static' was specified, but no values where set."
 				exit # TODO Set error code
 			fi
@@ -231,7 +231,7 @@ mount -t sysfs none ${rootfs}/sys
 mount -o bind /dev ${rootfs}/dev
 mount -o bind /dev/pts ${rootfs}/dev/pts
 mount -o bind ${kernel_path} ${rootfs}/var/pkg/kernel
-mount -o bind ${docker_path} ${rootfs}/var/pkg//docker
+mount -o bind ${docker_path} ${rootfs}/var/pkg/docker
 
 cd $rootfs
 
@@ -403,7 +403,7 @@ dpkg -i /var/pkg/kernel/libraspberrypi-doc_20150218-231723_armhf.deb
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT docker *****"
-dpkg -i /var/pkg/docker/${DOCKER_DEB}
+dpkg -i /var/pkg/docker/deb/${DOCKER_DEB}
 echo "***** HyprIoT docker installed *****"
 
 echo \"${_USER_NAME}:${_USER_PASS}\" | chpasswd
