@@ -15,6 +15,8 @@ image: hypriot/builder_base
 git:
   path: github.com/hypriot/rpi-image-builder
 
+cache:
+  - /var/cache
 
 script:
   - printenv
