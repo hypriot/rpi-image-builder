@@ -467,6 +467,10 @@ for rootpath in /proc/*/root; do
 	fi
 done
 
+echo `pwd`
+cd /
+echo "### Unmounting"
+
 umount -l ${rootfs}/dev/pts
 umount -l ${rootfs}/dev
 umount -l ${rootfs}/sys
@@ -479,6 +483,7 @@ umount -l ${rootfs}
 sync
 sleep 5
 
+echo $IMAGE_PATH
 kpartx -vds ${IMAGE_PATH}
 echo "Info: Created image ${IMAGE_PATH}."
 
