@@ -396,11 +396,11 @@ apt-get -y install rng-tools
 
 
 echo "***** Installing HyprIoT kernel *****"
-dpkg -i /var/pkg/kernel/raspberrypi-bootloader_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi0_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-dev_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-bin_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-doc_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi0_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-dev_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-bin_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT docker *****"
