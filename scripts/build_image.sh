@@ -241,7 +241,21 @@ cd $rootfs
 #debootstrap --arch armhf --variant=minbase --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url) # TODO: Research how to use in production
 # setup env
 
-debootstrap --arch armhf --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
+function unpack_debootstrap_tarball () {
+  debootstrap --unpack-tarball /tmp/cache/rpi_debootstrap_base.tgz --arch armhf --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
+}
+
+function pack_debootstrap_tarball () {
+  debootstrap --make-tarball /tmp/cache/rpi_debootstrap_base.tgz --arch armhf --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
+}
+
+mkdir -p /tmp/cache
+if [ -e /tmp/cache/rpi_debootstrap_base.tgz ]; then
+  unpack_debootstrap_tarball
+else
+  pack_debootstrap_tarball
+  unpack_debootstrap_tarball
+fi
 
 
 # Complete installation process
