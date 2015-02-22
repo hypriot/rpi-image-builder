@@ -16,12 +16,17 @@ git:
   path: github.com/hypriot/rpi-image-builder
 
 script:
+  - mkdir -p /tmp/cache/apt/lists/partial /tmp/cache/apt/archives/partial
+  - ls -lah /tmp/cache/apt/archives/**
+  - echo "dir::cache::archives /tmp/cache/apt;" > /etc/apt/apt.conf
+  - echo "dir::state::lists /tmp/cache/apt/lists;" >> /etc/apt/apt.conf
   - printenv
   - scripts/prepare_build_environment.sh
   - service apt-cacher-ng start
   - service binfmt-support start
   - scripts/fetch_build_inputs.sh
   - scripts/build_image.sh
+  - tree /tmp/cache -L 6
 
 
 publish:
