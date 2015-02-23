@@ -16,8 +16,9 @@ SETTINGS_PROFILE="hypriot"
 
 # locate path of RPi kernel
 kernel_path="$BUILD_INPUTS/kernel"
-docker_path="$BUILD_INPUTS/build_inputs/docker"
-
+mkdir -p $kernel_path
+docker_path="$BUILD_INPUTS/docker"
+mkdir -p $docker_path
 
 # settings
 _BOOT_PARTITION_SIZE="64M"		# "64M" = 64 MB
