@@ -414,7 +414,7 @@ rm -f raspi-config_20131216-1_all.deb
 
 
 apt-get -y install rng-tools
-
+apt-get -y install sudo
 
 echo "***** Installing HyprIoT kernel *****"
 dpkg -i /var/pkg/kernel/raspberrypi-bootloader_${KERNEL_DATE_TIME}_armhf.deb
@@ -427,6 +427,14 @@ echo "***** HyprIoT kernel installed *****"
 echo "***** Installing HyprIoT docker *****"
 dpkg -i /var/pkg/docker/deb/${DOCKER_DEB}
 echo "***** HyprIoT docker installed *****"
+
+echo "***** Installing HyprIoT user=pi *****"
+useradd -m pi --group docker --shell /bin/bash
+echo "pi:raspberry" | chpasswd
+mkdir -p /etc/sudoers.d
+echo "pi ALL=NOPASSWD: ALL" > /etc/sudoers.d/user-pi
+chmod 0440 /etc/sudoers.d/user-pi
+echo "***** Installing HyprIoT user=pi *****"
 
 echo \"${_USER_NAME}:${_USER_PASS}\" | chpasswd
 sed -i -e 's/KERNEL\!=\"eth\*|/KERNEL\!=\"/' /lib/udev/rules.d/75-persistent-net-generator.rules
