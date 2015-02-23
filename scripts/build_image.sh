@@ -284,7 +284,7 @@ chmod +x usr/sbin/policy-rc.d
 get_apt_sources_first_stage > etc/apt/sources.list
 
 # boot/cmdline.txt
-echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait" > boot/cmdline.txt
+echo "+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 cgroup-enable=memory swapaccount=1 elevator=deadline rootwait console=ttyAMA0,115200 kgdboc=ttyAMA0,115200" > boot/cmdline.txt
 
 # etc/fstab
 echo "${_FSTAB}" > etc/fstab
