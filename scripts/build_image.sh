@@ -436,6 +436,15 @@ echo "pi ALL=NOPASSWD: ALL" > /etc/sudoers.d/user-pi
 chmod 0440 /etc/sudoers.d/user-pi
 echo "***** Installing HyprIoT user=pi *****"
 
+echo "***** Installing HyprIoT bash prompt *****"
+cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bashrc /root/.bashrc
+cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bash_prompt /root/.bash_prompt
+
+cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bashrc /home/pi/.bashrc
+cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bash_prompt /home/pi/.bash_prompt
+chown -R pi:pi /home/pi
+echo "***** HyprIoT bash prompt installed *****"
+
 echo \"${_USER_NAME}:${_USER_PASS}\" | chpasswd
 sed -i -e 's/KERNEL\!=\"eth\*|/KERNEL\!=\"/' /lib/udev/rules.d/75-persistent-net-generator.rules
 rm -f /etc/udev/rules.d/70-persistent-net.rules
