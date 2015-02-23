@@ -10,12 +10,13 @@ KERNEL_DATETIME=${KERNEL_DATETIME:="20150218-231723"}
 DOCKER_DEB=${DOCKER_DEB:="docker_1.5.0hypriot-5_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
+BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
 
 SETTINGS_PROFILE="hypriot"
 
 # locate path of RPi kernel
-kernel_path="$RPI_IMAGE_BUILDER_ROOT/build_inputs/kernel"
-docker_path="$RPI_IMAGE_BUILDER_ROOT/build_inputs/docker"
+kernel_path="$BUILD_INPUTS/kernel"
+docker_path="$BUILD_INPUTS/build_inputs/docker"
 
 
 # settings
