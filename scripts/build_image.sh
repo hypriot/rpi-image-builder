@@ -242,15 +242,18 @@ cd $rootfs
 # setup env
 
 function unpack_debootstrap_tarball () {
-  debootstrap --unpack-tarball /tmp/cache/rpi_debootstrap_base.tgz --arch armhf --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
+  echo "### start unpacking debootstrap.tgz"
+  debootstrap --unpack-tarball /tmp/cache/debootstrap_rpi.tgz --arch armhf --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
 }
 
 function pack_debootstrap_tarball () {
-  debootstrap --make-tarball /tmp/cache/rpi_debootstrap_base.tgz --arch armhf --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
+  echo "### start packing debootstrap.tgz pack"
+  debootstrap --arch armhf --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
+  (cd $rootfs; tar czf - var/lib/apt var/cache/apt) > /tmp/cache/debootstrap_rpi.tgz
 }
 
 mkdir -p /tmp/cache
-if [ -e /tmp/cache/rpi_debootstrap_base.tgz ]; then
+if [ -e /tmp/cache/debootstrap_rpi.tgz ]; then
   unpack_debootstrap_tarball
 else
   pack_debootstrap_tarball
