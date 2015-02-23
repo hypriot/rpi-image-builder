@@ -163,6 +163,11 @@ iface eth0 inet6 auto
 
 # define destination folder where created image file will be stored
 mkdir -p ${BUILD_ENV}
+
+mount -t tmpfs -o size="1024m" tmpfs ${BUILD_ENV}
+
+mount | grep tmpfs
+
 mkdir -p $BUILD_ENV/images
 
 cd $BUILD_ENV
