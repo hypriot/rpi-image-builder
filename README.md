@@ -52,7 +52,7 @@ The following variables have to be defined in the GUI of the Drone Buildserver.
 * `RPI_IMAGE_BUILDER_ROOT: $DRONE_BUILD_DIR`
 * `BUILD_INPUTS: /tmp/cache/build_inputs`
 
-For uploading the build results to Amazon S3 we need the follwing Amazon S3 credentials
+For uploading the build results to Amazon S3 we need the following Amazon S3 credentials.
 
 * `AWS_ACCESS_KEY_ID: your_aws_key`
 * `AWS_SECRET_ACCESS_KEY: your_secret_access_key`
