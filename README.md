@@ -50,6 +50,7 @@ You have to enable privileged mode, because the image builder needs access to mo
 The following variables have to be defined in the GUI of the Drone Buildserver.
 
 * `RPI_IMAGE_BUILDER_ROOT: $DRONE_BUILD_DIR`
+* `BUILD_INPUTS: /tmp/cache/build_inputs`
 
 For uploading the build results to Amazon S3 we need the follwing Amazon S3 credentials
 
