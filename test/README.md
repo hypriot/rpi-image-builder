@@ -9,11 +9,12 @@ To test the SD card image for the Raspberry Pi use this Serverspec tests.
 3. Power on the Raspberry Pi
 4. Retrieve the host name or IP address to reach the Pi
 
-## Bundle
+## Install Serverspec
+
+You need ruby and bundle installed. Then you can install the dependencies locally with
 
 ```bash
-bundle install --path vendor/bundle
-bundle install --binstubs
+bundle install
 ```
 
 ## Run tests
@@ -22,5 +23,5 @@ Set the `TARGET_HOST` environment variable to the host name or
 IP address of your Pi. The user name for the test is `root`.
 
 ```bash
-TARGET_HOST=pi4 bin/rspec spec/hypriot-pi
+TARGET_HOST=pi4 bundle exec rspec spec/hypriot-pi
 ```
