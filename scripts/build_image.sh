@@ -373,7 +373,6 @@ chmod 755 root/firstboot.sh
 
 ######################################
 # enable login on serial console
-#echo "T0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100" > etc/inittab
 printf "# Spawn a getty on Raspberry Pi serial line\nT0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100\n" >> etc/inittab
 wget -q https://raw.githubusercontent.com/lurch/rpi-serial-console/master/rpi-serial-console -O usr/bin/rpi-serial-console
 chmod +x usr/bin/rpi-serial-console
