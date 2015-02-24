@@ -431,15 +431,15 @@ apt-get -y install rng-tools
 apt-get -y install sudo
 
 echo "***** Installing HyprIoT kernel *****"
-dpkg -i $BUILD_INPUTS/kernel/raspberrypi-bootloader_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i $BUILD_INPUTS/kernel/libraspberrypi0_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i $BUILD_INPUTS/kernel/libraspberrypi-dev_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i $BUILD_INPUTS/kernel/libraspberrypi-bin_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i $BUILD_INPUTS/kernel/libraspberrypi-doc_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/raspberrypi-bootloader_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi0_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-dev_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-bin_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-doc_${KERNEL_DATE_TIME}_armhf.deb
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT docker *****"
-dpkg -i $BUILD_INPUTS/docker/deb/${DOCKER_DEB}
+dpkg -i /var/pkg/docker/deb/${DOCKER_DEB}
 echo "***** HyprIoT docker installed *****"
 
 echo "***** Installing HyprIoT user=pi *****"
