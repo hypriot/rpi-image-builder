@@ -1,11 +1,12 @@
 #!/bin/bash
 set -x
 set -e
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150221-190136"}
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
 BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
 
 # provide the name of the packages that should be fetched here
-KERNEL_PACKAGES="kernel/libraspberrypi-bin_20150221-190136_armhf.deb kernel/libraspberrypi-dev_20150221-190136_armhf.deb kernel/libraspberrypi-doc_20150221-190136_armhf.deb kernel/libraspberrypi0_20150221-190136_armhf.deb kernel/raspberrypi-bootloader_20150221-190136_armhf.deb"
+KERNEL_PACKAGES="kernel/libraspberrypi-bin_${KERNEL_DATETIME}_armhf.deb kernel/libraspberrypi-dev_${KERNEL_DATETIME}_armhf.deb kernel/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb kernel/libraspberrypi0_${KERNEL_DATETIME}_armhf.deb kernel/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb"
 DOCKER_PACKAGES="docker/deb/docker-hypriot_1.5.0-7_armhf.deb"
 PACKAGES="$KERNEL_PACKAGES $DOCKER_PACKAGES"
 
