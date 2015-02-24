@@ -35,7 +35,7 @@ sudo update-alternatives --set apt-get /usr/bin/apt-fast
 
 function install_prerequisites () {
 # install packages needed for building the sd card image
-sudo apt-get install -y python-pip build-essential libncurses5-dev tree binfmt-support qemu qemu-user-static debootstrap kpartx lvm2 dosfstools apt-cacher-ng zip
+sudo apt-get install -y python-pip build-essential libncurses5-dev tree binfmt-support qemu qemu-user-static debootstrap kpartx lvm2 dosfstools apt-cacher-ng pigz
 
 # needed to fetch packages from s3
 sudo pip install awscli
