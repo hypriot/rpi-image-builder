@@ -9,7 +9,6 @@ describe command('dpkg -l docker-hypriot') do
   its(:stdout) { should match /1.5.0-7/ }
   its(:exit_status) { should eq 0 }
 end
- 
 
 describe file('/etc/default/docker') do
   its(:content) { should match /--storage-driver=overlay/ }
