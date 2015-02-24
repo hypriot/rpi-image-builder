@@ -50,7 +50,7 @@ function git_info() {
 
 # Only show username/host if not default
 function usernamehost() {
-  if [ $USER != $default_username ]; then echo "${MAGENTA}$USER${RESET}${BOLD}@${ORANGE}$HOSTNAME${RESET}${BOLD} in "; fi
+  if [ $USER != $default_username ]; then echo "${GREEN}HypriotOS: ${MAGENTA}$USER${RESET}${BOLD}@${ORANGE}$HOSTNAME${RESET}${BOLD} in "; fi
 }
 
 # iTerm Tab and Title Customization and prompt customization
