@@ -47,8 +47,15 @@ echo "Unmounting ${disk} ..."
 diskutil unmountDisk /dev/${disk}s1
 diskutil unmountDisk /dev/${disk}
 echo "Flashing $1 to ${disk} ..."
-echo "Press CTRL+T if you want to see the current info of dd command."
-sudo dd bs=1m if=$1 of=/dev/r${disk}
+pv=`which pv 2>/dev/null`
+if [ $? -eq 0 ]; then
+  size=`stat -f %z $1`
+  cat $1 | pv -s $size | sudo dd bs=1m of=/dev/r${disk}
+else
+  echo "No `pv` command found, so no progress available."
+  echo "Press CTRL+T if you want to see the current info of dd command."
+  sudo dd bs=1m if=$1 of=/dev/r${disk}
+fi
 echo "Unmounting and ejecting ${disk} ..."
 sleep 1
 diskutil unmountDisk /dev/${disk}s1
