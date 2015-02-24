@@ -19,9 +19,9 @@ bundle install
 
 ## Run tests
 
-Set the `TARGET_HOST` environment variable to the host name or
+Set the `PI` environment variable to the host name or
 IP address of your Pi. The user name for the test is `root`.
 
 ```bash
-TARGET_HOST=pi4 bin/rspec spec/hypriot-pi
+PI=pi4 bin/rspec spec/hypriot-pi
 ```
