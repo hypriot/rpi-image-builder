@@ -166,7 +166,7 @@ iface eth0 inet6 auto
 # define destination folder where created image file will be stored
 mkdir -p ${BUILD_ENV}
 
-mount -t tmpfs -o size="1024m" tmpfs ${BUILD_ENV}
+mount -t tmpfs -o size="1536m" tmpfs ${BUILD_ENV}
 
 mount | grep tmpfs
 
@@ -545,6 +545,10 @@ sleep 5
 
 echo "### remove dev mapper devices for image partitions"
 kpartx -vds ${IMAGE_PATH}
+
+echo "### compress $IMAGE_PATH to ${IMAGE_PATH}.zip"
+pigz --zip $IMAGE_PATH
+IMAGE_PATH=${IMAGE_PATH}.zip
 
 echo "### copy $IMAGE_PATH to $BUILD_RESULTS directory."
 mkdir -p $BUILD_RESULTS
