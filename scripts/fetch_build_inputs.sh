@@ -1,4 +1,6 @@
-#!/bin/bash -x
+#!/bin/bash
+set -x
+set -e
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
 BUILD_INPUTS=$RPI_IMAGE_BUILDER_ROOT/build_inputs
 

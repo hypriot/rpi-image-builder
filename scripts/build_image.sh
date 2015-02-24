@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 alias apt-get='apt-fast'
 
 set -e
