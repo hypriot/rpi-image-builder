@@ -525,6 +525,14 @@ for rootpath in /proc/*/root; do
 	fi
 done
 
+# archive rootfs and bootfs
+BOOT_ARCHIVE="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}-boot.tar"
+ROOT_ARCHIVE="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}-root.tar"
+
+tar cvf ${BOOT_ARCHIVE} -C ${bootfs}
+tar cvf ${ROOT_ARCHIVE} -C ${rootfs}
+
+
 # make sure we are not anymore in any mounted directory
 # else we might get a device busy error later when
 # we want to unmap the loopback device with kpartx
@@ -549,6 +557,8 @@ kpartx -vds ${IMAGE_PATH}
 echo "### copy $IMAGE_PATH to $BUILD_RESULTS directory."
 mkdir -p $BUILD_RESULTS
 cp $IMAGE_PATH $BUILD_RESULTS/
+cp $BOOT_ARCHIVE $BUILD_RESULTS/
+cp $ROOT_ARCHIVE $BUILD_RESULTS/
 
 echo "### Created image ${IMAGE_PATH}."
 
