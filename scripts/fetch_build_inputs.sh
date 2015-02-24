@@ -2,7 +2,7 @@
 set -x
 set -e
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-BUILD_INPUTS=$RPI_IMAGE_BUILDER_ROOT/build_inputs
+BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
 
 # provide the name of the packages that should be fetched here
 KERNEL_PACKAGES="kernel/libraspberrypi-bin_20150221-190136_armhf.deb kernel/libraspberrypi-dev_20150221-190136_armhf.deb kernel/libraspberrypi-doc_20150221-190136_armhf.deb kernel/libraspberrypi0_20150221-190136_armhf.deb kernel/raspberrypi-bootloader_20150221-190136_armhf.deb"
