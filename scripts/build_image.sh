@@ -547,7 +547,7 @@ echo "### remove dev mapper devices for image partitions"
 kpartx -vds ${IMAGE_PATH}
 
 echo "### compress $IMAGE_PATH to ${IMAGE_PATH}.zip"
-zip ${IMAGE_PATH}.zip $IMAGE_PATH
+pigz --zip $IMAGE_PATH
 IMAGE_PATH=${IMAGE_PATH}.zip
 
 echo "### copy $IMAGE_PATH to $BUILD_RESULTS directory."
