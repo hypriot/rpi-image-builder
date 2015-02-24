@@ -16,8 +16,8 @@ docker_path="$RPI_IMAGE_BUILDER_ROOT/build_inputs/docker"
 
 
 # settings
-_BOOT_PARTITION_SIZE="64M"		# "64M" = 64 MB
-_DEB_RELEASE="wheezy"				# jessie | wheezy | squeeze
+_BOOT_PARTITION_SIZE="64M"        # "64M" = 64 MB
+_DEB_RELEASE="wheezy"                # jessie | wheezy | squeeze
 _APT_SOURCE_DEBIAN="ftp://ftp.debian.org/debian"
 _APT_SOURCE_DEBIAN_CDN="http://http.debian.net/debian"
 _APT_SOURCE_RASPBIAN="http://mirror.netcologne.de/raspbian/raspbian"
@@ -25,17 +25,17 @@ _APT_SOURCE_RASPBIAN="http://mirror.netcologne.de/raspbian/raspbian"
 _USE_CACHE="yes"
 
 _FSTAB="
-proc			/proc	proc	defaults	0	0
-/dev/mmcblk0p1	/boot	vfat	defaults	0	0
+proc            /proc    proc    defaults    0    0
+/dev/mmcblk0p1    /boot    vfat    defaults    0    0
 "
 
 _HOSTNAME=""
 
-_NET_CONFIG=""				# dhcp|static
+_NET_CONFIG=""                # dhcp|static
 if [ "${_NET_CONFIG}" == "static" ]; then
-	_NET_ADDRESS=""
-	_NET_NETMASK=""
-	_NET_GATEWAY=""
+    _NET_ADDRESS=""
+    _NET_NETMASK=""
+    _NET_GATEWAY=""
 fi
 
 _MODULES=""
@@ -51,10 +51,10 @@ _USER_PASS=""
 
 _KEYMAP=""
 _TIMEZONE=""
-_LOCALES=""					#en_US.utf-8 de_DE.utf-8
+_LOCALES=""                    #en_US.utf-8 de_DE.utf-8
 _ENCODING=""
 
-# _DISK_OPTION=""				# expand rootfs|create new partion from free space|nothing
+# _DISK_OPTION=""                # expand rootfs|create new partion from free space|nothing
 
 
 ########################################
@@ -71,18 +71,18 @@ _ENCODING=""
 # also guards against ip6
 # http://unix.stackexchange.com/questions/9940/convince-apt-get-not-to-use-ipv6-method
 get_apt_source_mirror_url () {
-	if [ "${_USE_CACHE}" = "no" ]; then
-		echo "${_APT_SOURCE}"
-	else
-		HTTP="http://"
-		echo -n "http://localhost:3142/${_APT_SOURCE#${HTTP}}"
-	fi
+    if [ "${_USE_CACHE}" = "no" ]; then
+        echo "${_APT_SOURCE}"
+    else
+        HTTP="http://"
+        echo -n "http://localhost:3142/${_APT_SOURCE#${HTTP}}"
+    fi
 }
 
 
 get_apt_sources_first_stage () {
 
-	echo "
+    echo "
 deb $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
 #deb-src $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
 "
@@ -90,7 +90,7 @@ deb $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmw
 
 get_apt_sources_final_stage () {
 
-	echo "
+    echo "
 deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
 deb-src ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
 
@@ -106,16 +106,16 @@ deb-src http://security.debian.org/ ${_DEB_RELEASE}/updates main contrib non-fre
 # NETWORK CONFIG
 set_network_config () {
 
-	if [ -z "$1" ]; then
-		echo "Error on set_network_config: No profile specified!"
-		exit # TODO Set error code
-	fi
+    if [ -z "$1" ]; then
+        echo "Error on set_network_config: No profile specified!"
+        exit # TODO Set error code
+    fi
 
-	_NET_CONFIG_FILE="etc/network/interfaces"
+    _NET_CONFIG_FILE="etc/network/interfaces"
 
-	case "$1" in
-		"dhcp")
-			echo "
+    case "$1" in
+        "dhcp")
+            echo "
 auto lo
 iface lo inet loopback
 
@@ -123,32 +123,32 @@ auto eth0
 iface eth0 inet dhcp
 iface eth0 inet6 auto
 " > ${_NET_CONFIG_FILE}
-				;;
+                ;;
 
-		"static")
-			if [ -z ${_NET_ADDRESS} ] || [ -z ${_NET_NETMASK} ] || [ -z ${_NET_GATEWAY} ]; then 
-				echo "Error on set_network_config: 'static' was specified, but no values where set."
-				exit # TODO Set error code
-			fi
+        "static")
+            if [ -z ${_NET_ADDRESS} ] || [ -z ${_NET_NETMASK} ] || [ -z ${_NET_GATEWAY} ]; then
+                echo "Error on set_network_config: 'static' was specified, but no values where set."
+                exit # TODO Set error code
+            fi
 
-			echo "
+            echo "
 auto lo
 iface lo inet loopback
 
 auto eth0
 iface eth0 inet static
-	address ${_NET_ADDRESS} # 192.0.2.7
-	netmask ${_NET_NETMASK} # 255.255.255.0
-	gateway ${_NET_GATEWAY} # 192.0.2.254
+    address ${_NET_ADDRESS} # 192.0.2.7
+    netmask ${_NET_NETMASK} # 255.255.255.0
+    gateway ${_NET_GATEWAY} # 192.0.2.254
 iface eth0 inet6 auto
 " > ${_NET_CONFIG_FILE}
-				;;
+                ;;
 
-		*)
-				# TODO Debug msg
-				exit # TODO Set error code
-				;;
-	esac
+        *)
+                # TODO Debug msg
+                exit # TODO Set error code
+                ;;
+    esac
 
 }
 
@@ -170,7 +170,7 @@ BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 IMAGE_PATH=""
 IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}.img"
-dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024	# TODO: Decrease value or shrink at the end
+dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024    # TODO: Decrease value or shrink at the end
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
@@ -277,8 +277,8 @@ bcm2708-rng
 " >> etc/modules
 
 # debconf.set
-echo "console-common	console-data/keymap/policy	select	Select keymap from full list
-console-common	console-data/keymap/full	select	${_KEYMAP}
+echo "console-common    console-data/keymap/policy    select    Select keymap from full list
+console-common    console-data/keymap/full    select    ${_KEYMAP}
 " > debconf.set
 
 ## Write firstboot script
@@ -298,7 +298,7 @@ echo '  Collecting entropy ...' >> /dev/kmsg
 dd if=/dev/urandom of=/dev/null bs=1024 count=10 2>/dev/null
 
 while entropy=\$(cat /proc/sys/kernel/random/entropy_avail); [ \$entropy -lt 100 ]
-	do sleep 1
+    do sleep 1
 done
 
 rm -f /etc/ssh/ssh_host_*
@@ -363,7 +363,10 @@ echo 'force-unsafe-io' | sudo tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
 
 apt-get update
 
-apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
+apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl bash-completion # TODO FIXME
+
+# add docker bash completion
+curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
 
 # adding Debian Archive Automatic Signing Key (7.0/wheezy) <ftpmaster@debian.org> to apt-keyring
 gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
@@ -418,10 +421,10 @@ LANG=C chroot ${rootfs} /third-stage
 echo "Execute firstboot.sh only on first boot ..."
 echo "#!/bin/sh -e
 if [ ! -e /root/firstboot_done ]; then
-	touch /root/firstboot_done
-	if [ -e /root/firstboot.sh ]; then
-		/root/firstboot.sh
-	fi
+    touch /root/firstboot_done
+    if [ -e /root/firstboot.sh ]; then
+        /root/firstboot.sh
+    fi
 fi
 
 exit 0
@@ -460,14 +463,14 @@ sleep 30
 set +e
 # Kill processes still running in chroot.
 for rootpath in /proc/*/root; do
-	rootlink=$(readlink $rootpath)
-	if [ "x${rootlink}" != "x" ]; then
-		if [ "x${rootlink:0:${#rootfs}}" = "x${rootfs}" ]; then
-			# this process is in the chroot...
-			PID=$(basename $(dirname "$rootpath"))
-			kill -9 "$PID"
-		fi
-	fi
+    rootlink=$(readlink $rootpath)
+    if [ "x${rootlink}" != "x" ]; then
+        if [ "x${rootlink:0:${#rootfs}}" = "x${rootfs}" ]; then
+            # this process is in the chroot...
+            PID=$(basename $(dirname "$rootpath"))
+            kill -9 "$PID"
+        fi
+    fi
 done
 
 # make sure we are not anymore in any mounted directory
