@@ -391,6 +391,13 @@ apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
 
+# add hypriot_release file
+cat << VERSION > /etc/hypriot_release
+profile: ${SETTINGS_PROFILE}
+build: ${BUILD_TIME}
+
+VERSION
+
 # adding Debian Archive Automatic Signing Key (7.0/wheezy) <ftpmaster@debian.org> to apt-keyring
 gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
 gpg -a --export 8B48AD6246925553 | apt-key add -
