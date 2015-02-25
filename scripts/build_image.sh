@@ -1,13 +1,13 @@
 #!/bin/bash
-#set -x
+set -x
 alias apt-get='apt-fast'
 
 set -e
 
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150218-231723"}
-DOCKER_DEB=${DOCKER_DEB:="docker_1.5.0hypriot-5_armhf.deb"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150221-190136"}
+DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
 BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
@@ -233,6 +233,7 @@ mkdir -p ${rootfs}/dev
 mkdir -p ${rootfs}/dev/pts
 mkdir -p ${rootfs}/var/pkg/kernel
 mkdir -p ${rootfs}/var/pkg/docker
+mkdir -p ${rootfs}/var/pkg/gitdir
 
 mount -t proc none ${rootfs}/proc
 mount -t sysfs none ${rootfs}/sys
@@ -240,6 +241,7 @@ mount -o bind /dev ${rootfs}/dev
 mount -o bind /dev/pts ${rootfs}/dev/pts
 mount -o bind ${kernel_path} ${rootfs}/var/pkg/kernel
 mount -o bind ${docker_path} ${rootfs}/var/pkg/docker
+mount -o bind ${RPI_IMAGE_BUILDER_ROOT} ${rootfs}/var/pkg/gitdir
 
 cd $rootfs
 
@@ -431,11 +433,11 @@ apt-get -y install rng-tools
 apt-get -y install sudo
 
 echo "***** Installing HyprIoT kernel *****"
-dpkg -i /var/pkg/kernel/raspberrypi-bootloader_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi0_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-dev_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-bin_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-doc_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi0_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-dev_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-bin_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT docker *****"
@@ -451,11 +453,11 @@ chmod 0440 /etc/sudoers.d/user-pi
 echo "***** Installing HyprIoT user=pi *****"
 
 echo "***** Installing HyprIoT bash prompt *****"
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bashrc /root/.bashrc
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bash_prompt /root/.bash_prompt
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bashrc /root/.bashrc
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bash_prompt /root/.bash_prompt
 
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bashrc /home/pi/.bashrc
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bash_prompt /home/pi/.bash_prompt
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bashrc /home/pi/.bashrc
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bash_prompt /home/pi/.bash_prompt
 chown -R pi:pi /home/pi
 echo "***** HyprIoT bash prompt installed *****"
 
@@ -538,6 +540,7 @@ umount -l ${rootfs}/proc
 umount -l ${bootp}
 umount -l ${rootfs}/var/pkg/docker
 umount -l ${rootfs}/var/pkg/kernel
+umount -l ${rootfs}/var/pkg/gitdir
 umount -l ${rootfs}
 
 sync
