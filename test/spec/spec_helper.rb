@@ -14,11 +14,15 @@ else
   set :sudo_password, ENV['SUDO_PASSWORD']
 end
 
-host = ENV['PI'] || "pi4"
+host = ENV['PI']
+unless host
+  fail "No PI env with the target address given!"
+end
 
 options = Net::SSH::Config.for(host)
 
 options[:user] ||= 'root'
+options[:password] ||= 'hypriot'
 
 set :host,        options[:host_name] || host
 set :ssh_options, options
