@@ -1,4 +1,4 @@
-describe command('ps -ef') do
+describe command('ps -ax') do
   its(:stdout) { should match /getty -L ttyAMA0 115200 vt100/ }
 end
 
