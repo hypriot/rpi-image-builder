@@ -233,6 +233,7 @@ mkdir -p ${rootfs}/dev
 mkdir -p ${rootfs}/dev/pts
 mkdir -p ${rootfs}/var/pkg/kernel
 mkdir -p ${rootfs}/var/pkg/docker
+mkdir -p ${rootfs}/var/pkg/gitdir
 
 mount -t proc none ${rootfs}/proc
 mount -t sysfs none ${rootfs}/sys
@@ -240,6 +241,7 @@ mount -o bind /dev ${rootfs}/dev
 mount -o bind /dev/pts ${rootfs}/dev/pts
 mount -o bind ${kernel_path} ${rootfs}/var/pkg/kernel
 mount -o bind ${docker_path} ${rootfs}/var/pkg/docker
+mount -o bind ${RPI_IMAGE_BUILDER_ROOT} ${rootfs}/var/pkg/gitdir
 
 cd $rootfs
 
@@ -451,11 +453,11 @@ chmod 0440 /etc/sudoers.d/user-pi
 echo "***** Installing HyprIoT user=pi *****"
 
 echo "***** Installing HyprIoT bash prompt *****"
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bashrc /root/.bashrc
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bash_prompt /root/.bash_prompt
+cp /var/pkg/gitdir/scripts/files/bashrc /root/.bashrc
+cp /var/pkg/gitdir/scripts/files/bash_prompt /root/.bash_prompt
 
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bashrc /home/pi/.bashrc
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bash_prompt /home/pi/.bash_prompt
+cp /var/pkg/gitdir/scripts/files/bashrc /home/pi/.bashrc
+cp /var/pkg/gitdir/scripts/files/bash_prompt /home/pi/.bash_prompt
 chown -R pi:pi /home/pi
 echo "***** HyprIoT bash prompt installed *****"
 
@@ -538,6 +540,7 @@ umount -l ${rootfs}/proc
 umount -l ${bootp}
 umount -l ${rootfs}/var/pkg/docker
 umount -l ${rootfs}/var/pkg/kernel
+umount -l ${rootfs}/var/pkg/gitdir
 umount -l ${rootfs}
 
 sync
