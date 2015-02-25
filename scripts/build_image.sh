@@ -453,11 +453,11 @@ chmod 0440 /etc/sudoers.d/user-pi
 echo "***** Installing HyprIoT user=pi *****"
 
 echo "***** Installing HyprIoT bash prompt *****"
-cp /var/pkg/gitdir/scripts/files/bashrc /root/.bashrc
-cp /var/pkg/gitdir/scripts/files/bash_prompt /root/.bash_prompt
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bashrc /root/.bashrc
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bash_prompt /root/.bash_prompt
 
-cp /var/pkg/gitdir/scripts/files/bashrc /home/pi/.bashrc
-cp /var/pkg/gitdir/scripts/files/bash_prompt /home/pi/.bash_prompt
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bashrc /home/pi/.bashrc
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bash_prompt /home/pi/.bash_prompt
 chown -R pi:pi /home/pi
 echo "***** HyprIoT bash prompt installed *****"
 
