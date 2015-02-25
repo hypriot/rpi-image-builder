@@ -1,5 +1,5 @@
 describe command('uname -r') do
-  its(:stdout) { should eq "3.18.7-v7+\n" }
+  its(:stdout) { should match /3.18.7(-v7)?+/ }
   its(:exit_status) { should eq 0 }
 end
 
