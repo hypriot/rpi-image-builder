@@ -397,7 +397,7 @@ ls -l /var/pkg/kernel/
 echo 'listing /var/pkg/kernel/${KERNEL_DATETIME}/'
 ls -l /var/pkg/kernel/${KERNEL_DATETIME}/
 
-KERNEL_COMMIT=`cat /var/pkg/kernel/${KERNEL_DATETIME}/kernel-commit.txt`
+KERNEL_COMMIT=$(</var/pkg/kernel/${KERNEL_DATETIME}/kernel-commit.txt)
 
 # add hypriot_release file
 cat << VERSION > /etc/hypriot_release
