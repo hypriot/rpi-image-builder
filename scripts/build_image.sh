@@ -2,7 +2,6 @@
 set -x
 alias apt-get='apt-fast'
 
-set -
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
 KERNEL_DATETIME=${KERNEL_DATETIME:="20150226-004936"}
@@ -394,8 +393,8 @@ apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
 
-# add hypriot_release file
-cat << VERSION > /etc/hypriot_release
+echo 'add /etc/hypriot_release file'
+cat << VERSION | tee /etc/hypriot_release
 profile: ${SETTINGS_PROFILE}
 build: ${BUILD_TIME}
 commit: ${DRONE_COMMIT}
