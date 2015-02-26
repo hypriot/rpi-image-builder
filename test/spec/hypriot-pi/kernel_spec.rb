@@ -3,6 +3,16 @@ describe command('uname -r') do
   its(:exit_status) { should eq 0 }
 end
 
+describe file('/lib/modules/3.18.7+/build') do
+  it { should_not be_file }
+  it { should_not be_symlink }
+end
+
+describe file('/lib/modules/3.18.7-v7+/build') do
+  it { should_not be_file }
+  it { should_not be_symlink }
+end
+
 describe kernel_module('overlay') do
   it { should be_loaded }
 end

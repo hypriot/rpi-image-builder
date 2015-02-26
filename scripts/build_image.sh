@@ -2,15 +2,15 @@
 set -x
 alias apt-get='apt-fast'
 
-set -e
-
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150221-190136"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150226-004936"}
 DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
 BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
+
+KERNEL_COMMIT=${KERNEL_COMMIT:=$(<${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt)}
 
 SETTINGS_PROFILE="hypriot"
 
@@ -387,24 +387,26 @@ debconf-set-selections /debconf.set
 rm -f /debconf.set
 
 # make dpkg run faster
-echo 'force-unsafe-io' | sudo tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
+echo 'force-unsafe-io' | tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
 
 apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
 
-# add hypriot_release file
-cat << VERSION > /etc/hypriot_release
+echo 'add /etc/hypriot_release file'
+cat << VERSION | tee /etc/hypriot_release
 profile: ${SETTINGS_PROFILE}
 build: ${BUILD_TIME}
-
+commit: ${DRONE_COMMIT}
+kernel_build: ${KERNEL_DATETIME}
+kernel_commit: ${KERNEL_COMMIT}
 VERSION
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl bash-completion # TODO FIXME
- 
+
 # add docker bash completion
-curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker 
- 
+curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
+
 # adding Debian Archive Automatic Signing Key (7.0/wheezy) <ftpmaster@debian.org> to apt-keyring
 gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
 gpg -a --export 8B48AD6246925553 | apt-key add -
@@ -433,11 +435,11 @@ apt-get -y install rng-tools
 apt-get -y install sudo
 
 echo "***** Installing HyprIoT kernel *****"
-dpkg -i /var/pkg/kernel/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi0_${KERNEL_DATETIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-dev_${KERNEL_DATETIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-bin_${KERNEL_DATETIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi0_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-dev_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-bin_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT docker *****"
