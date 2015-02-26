@@ -2,11 +2,10 @@
 set -x
 alias apt-get='apt-fast'
 
-set -e
-
+set -
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150225-225916"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150226-004936"}
 DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
@@ -392,6 +391,11 @@ echo 'force-unsafe-io' | sudo tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
 apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
+
+echo 'listing /var/pkg/kernel/'
+ls -l /var/pkg/kernel/
+echo 'listing /var/pkg/kernel/${KERNEL_DATETIME}/'
+ls -l /var/pkg/kernel/${KERNEL_DATETIME}/
 
 KERNEL_COMMIT=`cat /var/pkg/kernel/${KERNEL_DATETIME}/kernel-commit.txt`
 
