@@ -16,7 +16,7 @@ DOCKER_PACKAGES="docker/deb/docker-hypriot_1.5.0-7_armhf.deb"
 PACKAGES="$KERNEL_PACKAGES $DOCKER_PACKAGES"
 
 # ensure that the target directories exist
-mkdir -p $BUILD_INPUTS/kernel
+mkdir -p $BUILD_INPUTS/kernel/${KERNEL_DATETIME}
 mkdir -p $BUILD_INPUTS/docker/deb
 
 # fetch packages and drop them into our target directory
