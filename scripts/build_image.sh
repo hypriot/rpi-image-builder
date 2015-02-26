@@ -443,8 +443,8 @@ dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-doc_${KERNEL_DATETIME}
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT kernel headers *****"
-dpkg -i /var/pgk/kernel/${KERNEL_DATETIME}/linux-headers-3.18.7-hypriotos+_3.18.7-hypriotos+-1_armhf.deb
-dpkg -i /var/pgk/kernel/${KERNEL_DATETIME}/linux-headers-3.18.7-hypriotos-v7+_3.18.7-hypriotos-v7+-2_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.7-hypriotos+_3.18.7-hypriotos+-1_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.7-hypriotos-v7+_3.18.7-hypriotos-v7+-2_armhf.deb
 echo "***** HyprIoT kernel headers installed *****"
 
 echo "***** Installing HyprIoT docker *****"
