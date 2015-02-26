@@ -6,7 +6,7 @@ set -e
 
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150221-190136"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150225-225916"}
 DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
@@ -393,18 +393,22 @@ apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
 
+KERNEL_COMMIT=`/var/pkg/kernel/kernel-commit.txt`
+
 # add hypriot_release file
 cat << VERSION > /etc/hypriot_release
 profile: ${SETTINGS_PROFILE}
 build: ${BUILD_TIME}
-
+commit: ${DRONE_COMMIT}
+kernel_build: ${KERNEL_DATETIME}
+kernel_commit: ${KERNEL_COMMIT}
 VERSION
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl bash-completion # TODO FIXME
- 
+
 # add docker bash completion
-curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker 
- 
+curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
+
 # adding Debian Archive Automatic Signing Key (7.0/wheezy) <ftpmaster@debian.org> to apt-keyring
 gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
 gpg -a --export 8B48AD6246925553 | apt-key add -
