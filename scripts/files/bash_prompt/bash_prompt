@@ -2,16 +2,15 @@
 # Shamelessly copied from https://github.com/gf3/dotfiles
 
 default_username='unknown'
-#OSNAME=""
-OSNAME="hyprOS: "
-#PROMPTCHAR="🐳 "
+OSNAME="HypriotOS: "
 PROMPTCHAR="\$"
 
 # determine OS type
 if [ $(uname -s) = Darwin ]; then
   OSNAME="OSX: "
+  PROMPTCHAR="🐳 "
 else
-  OSNAME="hyprOS: "
+  OSNAME="HypriotOS: "
 fi
 
 if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
@@ -64,10 +63,10 @@ function git_info() {
 
 # Only show username/host if not default
 function usernamehost() {
-  if [ $USER != $default_username ]; then 
-    echo "${BLUE}${OSNAME}${MAGENTA}$USER${RESET}${BOLD}@${ORANGE}$HOSTNAME${RESET}${BOLD} in "; 
+  if [ $USER != $default_username ]; then
+    echo "${BLUE}${OSNAME}${MAGENTA}$USER${RESET}${BOLD}@${ORANGE}$HOSTNAME${RESET}${BOLD} in ";
   else
-    echo "${BLUE}${OSNAME}"; 
+    echo "${BLUE}${OSNAME}";
   fi
 }
 
