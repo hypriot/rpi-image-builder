@@ -179,7 +179,7 @@ bootfs="${rootfs}/boot"
 BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 IMAGE_PATH=""
-IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}.img"
+IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img"
 dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024	# TODO: Decrease value or shrink at the end
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
@@ -552,6 +552,7 @@ echo "### remove dev mapper devices for image partitions"
 kpartx -vds ${IMAGE_PATH}
 
 echo "### compress $IMAGE_PATH to ${IMAGE_PATH}.zip"
+chmod -x $IMAGE_PATH
 pigz --zip $IMAGE_PATH
 IMAGE_PATH=${IMAGE_PATH}.zip
 
