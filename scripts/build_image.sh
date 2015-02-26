@@ -393,7 +393,7 @@ apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
 
-KERNEL_COMMIT=`/var/pkg/kernel/${KERNEL_DATETIME}/kernel-commit.txt`
+KERNEL_COMMIT=`cat /var/pkg/kernel/${KERNEL_DATETIME}/kernel-commit.txt`
 
 # add hypriot_release file
 cat << VERSION > /etc/hypriot_release
