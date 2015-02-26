@@ -11,6 +11,8 @@ BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
 BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
 
+KERNEL_COMMIT=${KERNEL_COMMIT:=$(<${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt)}
+
 SETTINGS_PROFILE="hypriot"
 
 # locate path of RPi kernel
@@ -391,13 +393,6 @@ echo 'force-unsafe-io' | tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
 apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
-
-echo 'listing /var/pkg/kernel/'
-ls -l /var/pkg/kernel/
-echo 'listing /var/pkg/kernel/${KERNEL_DATETIME}/'
-ls -l /var/pkg/kernel/${KERNEL_DATETIME}/
-
-KERNEL_COMMIT=$(</var/pkg/kernel/${KERNEL_DATETIME}/kernel-commit.txt)
 
 # add hypriot_release file
 cat << VERSION > /etc/hypriot_release
