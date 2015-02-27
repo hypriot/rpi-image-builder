@@ -528,7 +528,10 @@ done
 # we want to unmap the loopback device with kpartx
 cd /
 
+
 echo "### Unmounting"
+
+set +e  # ignore any errors for devices that cannot be umounted
 umount -l ${rootfs}/dev/pts
 umount -l ${rootfs}/dev
 umount -l ${rootfs}/sys
@@ -538,6 +541,7 @@ umount -l ${rootfs}/var/pkg/docker
 umount -l ${rootfs}/var/pkg/kernel
 umount -l ${rootfs}/var/pkg/gitdir
 umount -l ${rootfs}
+set -e  # fail fast again
 
 sync
 sleep 5
