@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -ex
 
 # set up error handling for cleaning up
 # after having an error
@@ -198,7 +198,6 @@ echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
 
 
 # Create partions
-set +e
 fdisk ${DEVICE} << EOF
 n
 p
@@ -232,7 +231,6 @@ mkfs.ext4 ${rootp}
 
 #######################################
 
-set -e
 
 mkdir -p ${rootfs}
 
@@ -527,7 +525,6 @@ cd ${rootfs}
 sync
 sleep 30
 
-set +e
 # Kill processes still running in chroot.
 for rootpath in /proc/*/root; do
 	rootlink=$(readlink $rootpath)
