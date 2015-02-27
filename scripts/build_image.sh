@@ -197,19 +197,8 @@ DEVICE=$(losetup -f --show ${IMAGE_PATH})
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
 
 # Create partions
-echo "n
-p
-1
+sfdisk --force --quiet ${DEVICE} < $BUILD_SCRIPTS/files/sd_card_partition_layout
 
-+${_BOOT_PARTITION_SIZE}
-t
-c
-n
-p
-2
-
-
-w" | fdisk ${DEVICE} || true
 
 losetup -d $DEVICE
 DEVICE=`kpartx -va ${IMAGE_PATH} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
