@@ -197,6 +197,7 @@ DEVICE=$(losetup -f --show ${IMAGE_PATH})
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
 
 
+set +e
 # Create partions
 fdisk ${DEVICE} << EOF
 n
@@ -213,6 +214,7 @@ p
 
 w
 EOF
+set -e
 
 fdisk -l $DEVICE
 
