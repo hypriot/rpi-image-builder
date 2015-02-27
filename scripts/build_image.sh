@@ -196,11 +196,8 @@ DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
 
-set +e
-
 # Create partions
-fdisk ${DEVICE} << EOF
-n
+echo "n
 p
 1
 
@@ -212,10 +209,7 @@ p
 2
 
 
-w
-EOF
-
-set -e
+w" fdisk ${DEVICE} || true
 
 losetup -d $DEVICE
 DEVICE=`kpartx -va ${IMAGE_PATH} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
