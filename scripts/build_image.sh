@@ -209,7 +209,7 @@ p
 2
 
 
-w" fdisk ${DEVICE} || true
+w" | fdisk ${DEVICE} || true
 
 losetup -d $DEVICE
 DEVICE=`kpartx -va ${IMAGE_PATH} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
