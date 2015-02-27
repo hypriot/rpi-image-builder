@@ -214,7 +214,6 @@ p
 
 w
 EOF
-set -e
 
 fdisk -l $DEVICE
 
@@ -233,6 +232,7 @@ mkfs.ext4 ${rootp}
 
 #######################################
 
+set -e
 
 mkdir -p ${rootfs}
 
