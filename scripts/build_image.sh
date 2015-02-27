@@ -1,6 +1,5 @@
 #!/bin/bash
 set -x
-alias apt-get='apt-fast'
 
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
