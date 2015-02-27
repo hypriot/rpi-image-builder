@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+#set -ex
 
 # set up error handling for cleaning up
 # after having an error
