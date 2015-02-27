@@ -1,6 +1,18 @@
 #!/bin/bash
 set -x
 
+# set up error handling for cleaning up
+# after having an error
+handle_error() {
+  echo "FAILED: line $1, exit code $2"
+  echo "Removing loop device"
+  kpartx -vds ${IMAGE_PATH}
+  exit 1
+}
+
+trap 'handle_error $LINENO $?' ERR
+
+# set up some variables for the script
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
 KERNEL_DATETIME=${KERNEL_DATETIME:="20150226-152134"}
