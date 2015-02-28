@@ -168,7 +168,7 @@ iface eth0 inet6 auto
 # define destination folder where created image file will be stored
 mkdir -p ${BUILD_ENV}
 
-mount -t tmpfs -o size="2048m" tmpfs ${BUILD_ENV}
+mount -t tmpfs -o size="2548m" tmpfs ${BUILD_ENV}
 
 mount | grep tmpfs
 
@@ -182,7 +182,7 @@ BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 IMAGE_PATH=""
 IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img"
-dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024
+dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1536
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
