@@ -11,8 +11,8 @@ KERNEL_PACKAGES="kernel/${KERNEL_DATETIME}/libraspberrypi-bin_${KERNEL_DATETIME}
                  kernel/${KERNEL_DATETIME}/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb \
                  kernel/${KERNEL_DATETIME}/libraspberrypi0_${KERNEL_DATETIME}_armhf.deb \
                  kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb \
-                 kernel/${KERNEL_DATETIME}/linux-headers-3.18.7-hypriotos+_3.18.7-hypriotos+-1_armhf.deb \
-                 kernel/${KERNEL_DATETIME}/linux-headers-3.18.7-hypriotos-v7+_3.18.7-hypriotos-v7+-2_armhf.deb \
+                 kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos+_3.18.8-hypriotos+-1_armhf.deb \
+                 kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos-v7+_3.18.8-hypriotos-v7+-2_armhf.deb \
                  kernel/${KERNEL_DATETIME}/kernel-commit.txt"
 DOCKER_PACKAGES="docker/deb/docker-hypriot_1.5.0-7_armhf.deb"
 PACKAGES="$KERNEL_PACKAGES $DOCKER_PACKAGES"
