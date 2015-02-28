@@ -29,7 +29,7 @@ end
 
 describe file('/lib/modules/3.18.7-hypriotos-v7+/build') do
   it { should be_symlink }
-  it { should be_linked_to '/usr/src/linux-headers-3.18.7-hypriotos-v7+' } 
+  it { should be_linked_to '/usr/src/linux-headers-3.18.7-hypriotos-v7+' }
 end
 
 describe file('/usr/src/linux-headers-3.18.7-hypriotos-v7+') do
