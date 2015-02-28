@@ -399,7 +399,9 @@ wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O - | apt-key
 curl -s -L --output /usr/bin/rpi-update https://raw.github.com/Hexxeh/rpi-update/master/rpi-update && chmod +x /usr/bin/rpi-update
 touch /boot/start.elf
 mkdir -p /lib/modules
-SKIP_BACKUP=1 /usr/bin/rpi-update
+SKIP_BACKUP=1 SKIP_KERNEL=1 /usr/bin/rpi-update
+echo 'Listing /lib/modules/'
+ls -al /lib/modules/
 
 apt-get -y install ${_APT_PACKAGES} # FIXME
 
