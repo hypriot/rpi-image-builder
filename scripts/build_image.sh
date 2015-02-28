@@ -113,10 +113,6 @@ get_apt_sources_final_stage () {
 deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
 deb-src ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
 
-deb ${_APT_SOURCE} ${_DEB_RELEASE}-updates main contrib non-free
-
-deb http://security.debian.org/ ${_DEB_RELEASE}/updates main contrib non-free
-deb-src http://security.debian.org/ ${_DEB_RELEASE}/updates main contrib non-free
 "
 }
 
