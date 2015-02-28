@@ -39,8 +39,8 @@ _BOOT_PARTITION_SIZE="64M"		# "64M" = 64 MB
 _DEB_RELEASE="wheezy"				# jessie | wheezy | squeeze
 _APT_SOURCE_DEBIAN="ftp://ftp.debian.org/debian"
 _APT_SOURCE_DEBIAN_CDN="http://http.debian.net/debian"
-_APT_SOURCE_RASPBIAN="http://mirror.netcologne.de/raspbian/raspbian"
-#_APT_SOURCE_RASPBIAN="http://archive.raspbian.org/raspbian"
+#_APT_SOURCE_RASPBIAN="http://mirror.netcologne.de/raspbian/raspbian"
+_APT_SOURCE_RASPBIAN="http://mirrordirector.raspbian.org/raspbian/"
 _USE_CACHE="yes"
 
 _FSTAB="
@@ -102,7 +102,7 @@ get_apt_source_mirror_url () {
 get_apt_sources_first_stage () {
 
 	echo "
-deb $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
+deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
 #deb-src $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
 "
 }
@@ -111,7 +111,7 @@ get_apt_sources_final_stage () {
 
 	echo "
 deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
-deb-src ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
+#deb-src ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
 "
 }
 
