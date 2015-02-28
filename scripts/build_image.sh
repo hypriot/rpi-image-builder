@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -ex
+set -ex
 
 # set up error handling for cleaning up
 # after having an error
@@ -39,7 +39,6 @@ _BOOT_PARTITION_SIZE="64M"		# "64M" = 64 MB
 _DEB_RELEASE="wheezy"				# jessie | wheezy | squeeze
 _APT_SOURCE_DEBIAN="ftp://ftp.debian.org/debian"
 _APT_SOURCE_DEBIAN_CDN="http://http.debian.net/debian"
-#_APT_SOURCE_RASPBIAN="http://mirror.netcologne.de/raspbian/raspbian"
 _APT_SOURCE_RASPBIAN="http://mirrordirector.raspbian.org/raspbian/"
 _USE_CACHE="yes"
 
@@ -99,19 +98,10 @@ get_apt_source_mirror_url () {
 }
 
 
-get_apt_sources_first_stage () {
-
-	echo "
+get_apt_sources_list () {
+echo "
 deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
 #deb-src $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
-"
-}
-
-get_apt_sources_final_stage () {
-
-	echo "
-deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
-#deb-src ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
 "
 }
 
@@ -275,7 +265,7 @@ chmod +x usr/sbin/policy-rc.d
 
 
 # etc/apt/sources.list
-get_apt_sources_first_stage > etc/apt/sources.list
+get_apt_sources_list > etc/apt/sources.list
 
 # boot/cmdline.txt
 echo "+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 cgroup-enable=memory swapaccount=1 elevator=deadline rootwait console=ttyAMA0,115200 kgdboc=ttyAMA0,115200" > boot/cmdline.txt
@@ -479,7 +469,7 @@ exit 0
 ###################
 # write apt source list again
 echo "write apt source list again  ..."
-get_apt_sources_final_stage > etc/apt/sources.list
+get_apt_sources_list > etc/apt/sources.list
 
 ###################
 # cleanup
@@ -526,7 +516,9 @@ cd /
 
 echo "### Unmounting"
 
-set +e  # ignore any errors for devices that cannot be umounted
+# ignore any errors for devices that cannot be umounted
+set +e
+
 umount -l ${rootfs}/dev/pts
 umount -l ${rootfs}/dev
 umount -l ${rootfs}/sys
@@ -536,7 +528,9 @@ umount -l ${rootfs}/var/pkg/docker
 umount -l ${rootfs}/var/pkg/kernel
 umount -l ${rootfs}/var/pkg/gitdir
 umount -l ${rootfs}
-set -e  # fail fast again
+
+# fail fast again
+set -e
 
 sync
 sleep 5
