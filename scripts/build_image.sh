@@ -479,8 +479,6 @@ get_apt_sources_list > etc/apt/sources.list
 echo "cleanup ..."
 echo "#!/bin/bash -x
 apt-get update
-aptitude update
-aptitude clean
 apt-get clean
 rm -f /etc/ssl/private/ssl-cert-snakeoil.key
 rm -f /etc/ssl/certs/ssl-cert-snakeoil.pem
