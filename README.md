@@ -58,3 +58,13 @@ For uploading the build results to Amazon S3 we need the following Amazon S3 cre
 
 * `AWS_ACCESS_KEY_ID: your_aws_key`
 * `AWS_SECRET_ACCESS_KEY: your_secret_access_key`
+
+### Problems with loop devices
+If you encounter error messages related to loop devices it is most probably a problem
+with loop devices which haven not been released during the image building process.
+
+To fix this manually use the following command on the build host:
+
+```
+for loop_device in $(losetup -a | awk '{print $1};' | sed "s/:$//"); do losetup -d $loop_device; done
+```

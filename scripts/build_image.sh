@@ -1,15 +1,32 @@
 #!/bin/bash
-set -x
-alias apt-get='apt-fast'
+set -ex
 
+# set up error handling for cleaning up
+# after having an error
+handle_error() {
+  echo "FAILED: line $1, exit code $2"
+  echo "Removing loop device"
+  # ensure we are outside mounted image filesystem
+  cd /
+  # remove loop device for image
+  kpartx -vds ${IMAGE_PATH}
+  exit 1
+}
+
+trap 'handle_error $LINENO $?' ERR
+
+# set up some variables for the script
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
 KERNEL_DATETIME=${KERNEL_DATETIME:="20150226-152134"}
 DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
-BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
-BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
+BUILD_RESULTS=${BUILD_RESULTS:="$RPI_IMAGE_BUILDER_ROOT/build_results"}
+BUILD_INPUTS=${BUILD_INPUTS:="$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
+BUILD_SCRIPTS=${BUILD_SCRIPTS:="$RPI_IMAGE_BUILDER_ROOT/scripts"}
 
+mkdir -p ${BUILD_INPUTS}/kernel/$KERNEL_DATETIME
+touch ${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt
 KERNEL_COMMIT=${KERNEL_COMMIT:=$(<${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt)}
 
 SETTINGS_PROFILE="hypriot"
@@ -25,8 +42,7 @@ _BOOT_PARTITION_SIZE="64M"		# "64M" = 64 MB
 _DEB_RELEASE="wheezy"				# jessie | wheezy | squeeze
 _APT_SOURCE_DEBIAN="ftp://ftp.debian.org/debian"
 _APT_SOURCE_DEBIAN_CDN="http://http.debian.net/debian"
-_APT_SOURCE_RASPBIAN="http://mirror.netcologne.de/raspbian/raspbian"
-#_APT_SOURCE_RASPBIAN="http://archive.raspbian.org/raspbian"
+_APT_SOURCE_RASPBIAN="http://mirrordirector.raspbian.org/raspbian/"
 _USE_CACHE="yes"
 
 _FSTAB="
@@ -85,24 +101,10 @@ get_apt_source_mirror_url () {
 }
 
 
-get_apt_sources_first_stage () {
-
-	echo "
-deb $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
-#deb-src $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
-"
-}
-
-get_apt_sources_final_stage () {
-
-	echo "
+get_apt_sources_list () {
+echo "
 deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
-deb-src ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
-
-deb ${_APT_SOURCE} ${_DEB_RELEASE}-updates main contrib non-free
-
-deb http://security.debian.org/ ${_DEB_RELEASE}/updates main contrib non-free
-deb-src http://security.debian.org/ ${_DEB_RELEASE}/updates main contrib non-free
+#deb-src $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
 "
 }
 
@@ -166,7 +168,7 @@ iface eth0 inet6 auto
 # define destination folder where created image file will be stored
 mkdir -p ${BUILD_ENV}
 
-mount -t tmpfs -o size="1536m" tmpfs ${BUILD_ENV}
+mount -t tmpfs -o size="2048m" tmpfs ${BUILD_ENV}
 
 mount | grep tmpfs
 
@@ -180,31 +182,14 @@ BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 IMAGE_PATH=""
 IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img"
-dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024	# TODO: Decrease value or shrink at the end
+dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
 
-
 # Create partions
-set +e
-fdisk ${DEVICE} << EOF
-n
-p
-1
+sfdisk --force --quiet ${DEVICE} < $BUILD_SCRIPTS/files/sd_card_partition_layout
 
-+${_BOOT_PARTITION_SIZE}
-t
-c
-n
-p
-2
-
-
-w
-EOF
-
-fdisk -l $DEVICE
 
 losetup -d $DEVICE
 DEVICE=`kpartx -va ${IMAGE_PATH} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
@@ -220,8 +205,6 @@ mkfs.vfat ${bootp}
 mkfs.ext4 ${rootp}
 
 #######################################
-
-set -e
 
 mkdir -p ${rootfs}
 
@@ -285,7 +268,7 @@ chmod +x usr/sbin/policy-rc.d
 
 
 # etc/apt/sources.list
-get_apt_sources_first_stage > etc/apt/sources.list
+get_apt_sources_list > etc/apt/sources.list
 
 # boot/cmdline.txt
 echo "+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 cgroup-enable=memory swapaccount=1 elevator=deadline rootwait console=ttyAMA0,115200 kgdboc=ttyAMA0,115200" > boot/cmdline.txt
@@ -494,15 +477,13 @@ exit 0
 ###################
 # write apt source list again
 echo "write apt source list again  ..."
-get_apt_sources_final_stage > etc/apt/sources.list
+get_apt_sources_list > etc/apt/sources.list
 
 ###################
 # cleanup
 echo "cleanup ..."
 echo "#!/bin/bash -x
 apt-get update
-aptitude update
-aptitude clean
 apt-get clean
 rm -f /etc/ssl/private/ssl-cert-snakeoil.key
 rm -f /etc/ssl/certs/ssl-cert-snakeoil.pem
@@ -521,7 +502,6 @@ cd ${rootfs}
 sync
 sleep 30
 
-set +e
 # Kill processes still running in chroot.
 for rootpath in /proc/*/root; do
 	rootlink=$(readlink $rootpath)
@@ -539,16 +519,17 @@ done
 # we want to unmap the loopback device with kpartx
 cd /
 
+
 echo "### Unmounting"
-umount -l ${rootfs}/dev/pts
-umount -l ${rootfs}/dev
-umount -l ${rootfs}/sys
-umount -l ${rootfs}/proc
-umount -l ${bootp}
-umount -l ${rootfs}/var/pkg/docker
-umount -l ${rootfs}/var/pkg/kernel
-umount -l ${rootfs}/var/pkg/gitdir
-umount -l ${rootfs}
+umount -l ${rootfs}/dev/pts || true
+umount -l ${rootfs}/dev || true
+umount -l ${rootfs}/sys || true
+umount -l ${rootfs}/proc || true
+umount -l ${bootp} || true
+umount -l ${rootfs}/var/pkg/docker || true
+umount -l ${rootfs}/var/pkg/kernel || true
+umount -l ${rootfs}/var/pkg/gitdir || true
+umount -l ${rootfs} || true
 
 sync
 sleep 5
