@@ -112,7 +112,6 @@ get_apt_sources_final_stage () {
 	echo "
 deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
 deb-src ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
-
 "
 }
 
@@ -176,7 +175,7 @@ iface eth0 inet6 auto
 # define destination folder where created image file will be stored
 mkdir -p ${BUILD_ENV}
 
-mount -t tmpfs -o size="1536m" tmpfs ${BUILD_ENV}
+mount -t tmpfs -o size="2048m" tmpfs ${BUILD_ENV}
 
 mount | grep tmpfs
 
@@ -190,7 +189,7 @@ BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 IMAGE_PATH=""
 IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img"
-dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024	# TODO: Decrease value or shrink at the end
+dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1500	# TODO: Decrease value or shrink at the end
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
