@@ -6,6 +6,9 @@ set -ex
 handle_error() {
   echo "FAILED: line $1, exit code $2"
   echo "Removing loop device"
+  # ensure we are outside mounted image filesystem
+  cd /
+  # remove loop device for image
   kpartx -vds ${IMAGE_PATH}
   exit 1
 }
@@ -515,22 +518,15 @@ cd /
 
 
 echo "### Unmounting"
-
-# ignore any errors for devices that cannot be umounted
-set +e
-
-umount -l ${rootfs}/dev/pts
-umount -l ${rootfs}/dev
-umount -l ${rootfs}/sys
-umount -l ${rootfs}/proc
-umount -l ${bootp}
-umount -l ${rootfs}/var/pkg/docker
-umount -l ${rootfs}/var/pkg/kernel
-umount -l ${rootfs}/var/pkg/gitdir
-umount -l ${rootfs}
-
-# fail fast again
-set -e
+umount -l ${rootfs}/dev/pts || true
+umount -l ${rootfs}/dev || true
+umount -l ${rootfs}/sys || true
+umount -l ${rootfs}/proc || true
+umount -l ${bootp} || true
+umount -l ${rootfs}/var/pkg/docker || true
+umount -l ${rootfs}/var/pkg/kernel || true
+umount -l ${rootfs}/var/pkg/gitdir || true
+umount -l ${rootfs} || true
 
 sync
 sleep 5
