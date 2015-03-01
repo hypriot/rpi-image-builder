@@ -529,10 +529,8 @@ done
 BOOT_ARCHIVE="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}-boot.tar"
 ROOT_ARCHIVE="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}-root.tar"
 
-cd $bootfs
-tar cf $BOOT_ARCHIVE .
-cd $rootfs
-tar cf $ROOT_ARCHIVE --exclude $bootfs .
+tar -C $bootfs-cf $BOOT_ARCHIVE .
+tar -C $rootfs -cf $ROOT_ARCHIVE --exclude $bootfs .
 
 # make sure we are not anymore in any mounted directory
 # else we might get a device busy error later when
@@ -546,8 +544,10 @@ umount -l ${rootfs}/sys
 umount -l ${rootfs}/proc
 umount -l ${rootfs}/var/pkg/docker
 umount -l ${rootfs}/var/pkg/kernel
-umount -l ${bootp}
-umount -l ${rootp}
+
+# use device or mountpoint to unmount
+#umount -l ${bootp}
+#umount -l ${rootp}
 umount -l ${bootfs}
 umount -l ${rootfs}
 
