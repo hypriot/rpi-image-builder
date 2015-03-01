@@ -529,7 +529,7 @@ done
 BOOT_ARCHIVE="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}-boot.tar"
 ROOT_ARCHIVE="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}-root.tar"
 
-tar -C $bootfs-cf $BOOT_ARCHIVE .
+tar -C $bootfs -cf $BOOT_ARCHIVE .
 tar -C $rootfs -cf $ROOT_ARCHIVE --exclude $bootfs .
 
 # make sure we are not anymore in any mounted directory
