@@ -1,16 +1,33 @@
 #!/bin/bash
-#set -x
-alias apt-get='apt-fast'
+set -ex
 
-set -e
+# set up error handling for cleaning up
+# after having an error
+handle_error() {
+  echo "FAILED: line $1, exit code $2"
+  echo "Removing loop device"
+  # ensure we are outside mounted image filesystem
+  cd /
+  # remove loop device for image
+  kpartx -vds ${IMAGE_PATH}
+  exit 1
+}
 
+trap 'handle_error $LINENO $?' ERR
+
+# set up some variables for the script
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150218-231723"}
-DOCKER_DEB=${DOCKER_DEB:="docker_1.5.0hypriot-5_armhf.deb"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150228-222210"}
+DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
-BUILD_RESULTS=${BUILD_RESULTS:="/$RPI_IMAGE_BUILDER_ROOT/build_results"}
-BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
+BUILD_RESULTS=${BUILD_RESULTS:="$RPI_IMAGE_BUILDER_ROOT/build_results"}
+BUILD_INPUTS=${BUILD_INPUTS:="$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
+BUILD_SCRIPTS=${BUILD_SCRIPTS:="$RPI_IMAGE_BUILDER_ROOT/scripts"}
+
+mkdir -p ${BUILD_INPUTS}/kernel/$KERNEL_DATETIME
+touch ${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt
+KERNEL_COMMIT=${KERNEL_COMMIT:=$(<${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt)}
 
 SETTINGS_PROFILE="hypriot"
 
@@ -25,8 +42,7 @@ _BOOT_PARTITION_SIZE="64M"		# "64M" = 64 MB
 _DEB_RELEASE="wheezy"				# jessie | wheezy | squeeze
 _APT_SOURCE_DEBIAN="ftp://ftp.debian.org/debian"
 _APT_SOURCE_DEBIAN_CDN="http://http.debian.net/debian"
-_APT_SOURCE_RASPBIAN="http://mirror.netcologne.de/raspbian/raspbian"
-#_APT_SOURCE_RASPBIAN="http://archive.raspbian.org/raspbian"
+_APT_SOURCE_RASPBIAN="http://mirrordirector.raspbian.org/raspbian/"
 _USE_CACHE="yes"
 
 _FSTAB="
@@ -85,24 +101,10 @@ get_apt_source_mirror_url () {
 }
 
 
-get_apt_sources_first_stage () {
-
-	echo "
-deb $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
-#deb-src $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
-"
-}
-
-get_apt_sources_final_stage () {
-
-	echo "
+get_apt_sources_list () {
+echo "
 deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
-deb-src ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
-
-deb ${_APT_SOURCE} ${_DEB_RELEASE}-updates main contrib non-free
-
-deb http://security.debian.org/ ${_DEB_RELEASE}/updates main contrib non-free
-deb-src http://security.debian.org/ ${_DEB_RELEASE}/updates main contrib non-free
+#deb-src $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
 "
 }
 
@@ -166,7 +168,7 @@ iface eth0 inet6 auto
 # define destination folder where created image file will be stored
 mkdir -p ${BUILD_ENV}
 
-mount -t tmpfs -o size="1024m" tmpfs ${BUILD_ENV}
+mount -t tmpfs -o size="2048m" tmpfs ${BUILD_ENV}
 
 mount | grep tmpfs
 
@@ -179,32 +181,15 @@ bootfs="${rootfs}/boot"
 BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 IMAGE_PATH=""
-IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}.img"
-dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024	# TODO: Decrease value or shrink at the end
+IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img"
+dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
 
-
 # Create partions
-set +e
-fdisk ${DEVICE} << EOF
-n
-p
-1
+sfdisk --force --quiet ${DEVICE} < $BUILD_SCRIPTS/files/sd_card_partition_layout
 
-+${_BOOT_PARTITION_SIZE}
-t
-c
-n
-p
-2
-
-
-w
-EOF
-
-fdisk -l $DEVICE
 
 losetup -d $DEVICE
 DEVICE=`kpartx -va ${IMAGE_PATH} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
@@ -221,8 +206,6 @@ mkfs.ext4 ${rootp}
 
 #######################################
 
-set -e
-
 mkdir -p ${rootfs}
 
 mount ${rootp} ${rootfs}
@@ -233,6 +216,7 @@ mkdir -p ${rootfs}/dev
 mkdir -p ${rootfs}/dev/pts
 mkdir -p ${rootfs}/var/pkg/kernel
 mkdir -p ${rootfs}/var/pkg/docker
+mkdir -p ${rootfs}/var/pkg/gitdir
 
 mount -t proc none ${rootfs}/proc
 mount -t sysfs none ${rootfs}/sys
@@ -240,6 +224,7 @@ mount -o bind /dev ${rootfs}/dev
 mount -o bind /dev/pts ${rootfs}/dev/pts
 mount -o bind ${kernel_path} ${rootfs}/var/pkg/kernel
 mount -o bind ${docker_path} ${rootfs}/var/pkg/docker
+mount -o bind ${RPI_IMAGE_BUILDER_ROOT} ${rootfs}/var/pkg/gitdir
 
 cd $rootfs
 
@@ -283,7 +268,7 @@ chmod +x usr/sbin/policy-rc.d
 
 
 # etc/apt/sources.list
-get_apt_sources_first_stage > etc/apt/sources.list
+get_apt_sources_list > etc/apt/sources.list
 
 # boot/cmdline.txt
 echo "+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 cgroup-enable=memory swapaccount=1 elevator=deadline rootwait console=ttyAMA0,115200 kgdboc=ttyAMA0,115200" > boot/cmdline.txt
@@ -385,24 +370,26 @@ debconf-set-selections /debconf.set
 rm -f /debconf.set
 
 # make dpkg run faster
-echo 'force-unsafe-io' | sudo tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
+echo 'force-unsafe-io' | tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
 
 apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
 
-# add hypriot_release file
-cat << VERSION > /etc/hypriot_release
+echo 'add /etc/hypriot_release file'
+cat << VERSION | tee /etc/hypriot_release
 profile: ${SETTINGS_PROFILE}
 build: ${BUILD_TIME}
-
+commit: ${DRONE_COMMIT}
+kernel_build: ${KERNEL_DATETIME}
+kernel_commit: ${KERNEL_COMMIT}
 VERSION
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl bash-completion # TODO FIXME
- 
+
 # add docker bash completion
-curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker 
- 
+curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
+
 # adding Debian Archive Automatic Signing Key (7.0/wheezy) <ftpmaster@debian.org> to apt-keyring
 gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
 gpg -a --export 8B48AD6246925553 | apt-key add -
@@ -412,7 +399,9 @@ wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O - | apt-key
 curl -s -L --output /usr/bin/rpi-update https://raw.github.com/Hexxeh/rpi-update/master/rpi-update && chmod +x /usr/bin/rpi-update
 touch /boot/start.elf
 mkdir -p /lib/modules
-SKIP_BACKUP=1 /usr/bin/rpi-update
+SKIP_BACKUP=1 SKIP_KERNEL=1 /usr/bin/rpi-update
+echo 'Listing /lib/modules/'
+ls -al /lib/modules/
 
 apt-get -y install ${_APT_PACKAGES} # FIXME
 
@@ -431,12 +420,17 @@ apt-get -y install rng-tools
 apt-get -y install sudo
 
 echo "***** Installing HyprIoT kernel *****"
-dpkg -i /var/pkg/kernel/raspberrypi-bootloader_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi0_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-dev_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-bin_${KERNEL_DATE_TIME}_armhf.deb
-dpkg -i /var/pkg/kernel/libraspberrypi-doc_${KERNEL_DATE_TIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi0_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-dev_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-bin_${KERNEL_DATETIME}_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb
 echo "***** HyprIoT kernel installed *****"
+
+echo "***** Installing HyprIoT kernel headers *****"
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos+_3.18.8-hypriotos+-1_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos-v7+_3.18.8-hypriotos-v7+-2_armhf.deb
+echo "***** HyprIoT kernel headers installed *****"
 
 echo "***** Installing HyprIoT docker *****"
 dpkg -i /var/pkg/docker/deb/${DOCKER_DEB}
@@ -451,11 +445,11 @@ chmod 0440 /etc/sudoers.d/user-pi
 echo "***** Installing HyprIoT user=pi *****"
 
 echo "***** Installing HyprIoT bash prompt *****"
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bashrc /root/.bashrc
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bash_prompt /root/.bash_prompt
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bashrc /root/.bashrc
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bash_prompt /root/.bash_prompt
 
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bashrc /home/pi/.bashrc
-cp $RPI_IMAGE_BUILDER_ROOT/scripts/files/bash_prompt /home/pi/.bash_prompt
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bashrc /home/pi/.bashrc
+cp /var/pkg/gitdir/scripts/files/bash_prompt/bash_prompt /home/pi/.bash_prompt
 chown -R pi:pi /home/pi
 echo "***** HyprIoT bash prompt installed *****"
 
@@ -485,15 +479,13 @@ exit 0
 ###################
 # write apt source list again
 echo "write apt source list again  ..."
-get_apt_sources_final_stage > etc/apt/sources.list
+get_apt_sources_list > etc/apt/sources.list
 
 ###################
 # cleanup
 echo "cleanup ..."
 echo "#!/bin/bash -x
 apt-get update
-aptitude update
-aptitude clean
 apt-get clean
 rm -f /etc/ssl/private/ssl-cert-snakeoil.key
 rm -f /etc/ssl/certs/ssl-cert-snakeoil.pem
@@ -512,7 +504,6 @@ cd ${rootfs}
 sync
 sleep 30
 
-set +e
 # Kill processes still running in chroot.
 for rootpath in /proc/*/root; do
 	rootlink=$(readlink $rootpath)
@@ -537,25 +528,32 @@ tar -C $rootfs -cf $ROOT_ARCHIVE --exclude $bootfs .
 # we want to unmap the loopback device with kpartx
 cd /
 
+
 echo "### Unmounting"
-umount -l ${rootfs}/dev/pts
-umount -l ${rootfs}/dev
-umount -l ${rootfs}/sys
-umount -l ${rootfs}/proc
-umount -l ${rootfs}/var/pkg/docker
-umount -l ${rootfs}/var/pkg/kernel
+umount -l ${rootfs}/dev/pts || true
+umount -l ${rootfs}/dev || true
+umount -l ${rootfs}/sys || true
+umount -l ${rootfs}/proc || true
+umount -l ${rootfs}/var/pkg/docker || true
+umount -l ${rootfs}/var/pkg/kernel || true
+umount -l ${rootfs}/var/pkg/gitdir || true
 
 # use device or mountpoint to unmount
-#umount -l ${bootp}
-#umount -l ${rootp}
-umount -l ${bootfs}
-umount -l ${rootfs}
+#umount -l ${bootp} || true
+#umount -l ${rootp} || true
+umount -l ${bootfs} || true
+umount -l ${rootfs} || true
 
 sync
 sleep 5
 
 echo "### remove dev mapper devices for image partitions"
 kpartx -vds ${IMAGE_PATH}
+
+echo "### compress $IMAGE_PATH to ${IMAGE_PATH}.zip"
+chmod -x $IMAGE_PATH
+pigz --zip $IMAGE_PATH
+IMAGE_PATH=${IMAGE_PATH}.zip
 
 echo "### copy $IMAGE_PATH to $BUILD_RESULTS directory."
 mkdir -p $BUILD_RESULTS
