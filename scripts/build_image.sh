@@ -517,8 +517,8 @@ for rootpath in /proc/*/root; do
 done
 
 # archive rootfs and bootfs
-BOOT_ARCHIVE="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}-boot.tar"
-ROOT_ARCHIVE="${BUILD_ENV}/images/${SETTINGS_PROFILE}-${BUILD_TIME}-root.tar"
+BOOT_ARCHIVE="${IMAGE_PATH}-boot.tar"
+ROOT_ARCHIVE="${IMAGE_PATH}-root.tar"
 
 tar -C $bootfs -cf $BOOT_ARCHIVE .
 tar -C $rootfs -cf $ROOT_ARCHIVE --exclude $bootfs .
