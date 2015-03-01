@@ -516,6 +516,13 @@ for rootpath in /proc/*/root; do
 	fi
 done
 
+# archive rootfs and bootfs
+BOOT_ARCHIVE="${IMAGE_PATH}-boot.tar"
+ROOT_ARCHIVE="${IMAGE_PATH}-root.tar"
+
+tar -C $bootfs -cf $BOOT_ARCHIVE .
+tar -C $rootfs -cf $ROOT_ARCHIVE --exclude $bootfs .
+
 # make sure we are not anymore in any mounted directory
 # else we might get a device busy error later when
 # we want to unmap the loopback device with kpartx
@@ -527,10 +534,14 @@ umount -l ${rootfs}/dev/pts || true
 umount -l ${rootfs}/dev || true
 umount -l ${rootfs}/sys || true
 umount -l ${rootfs}/proc || true
-umount -l ${bootp} || true
 umount -l ${rootfs}/var/pkg/docker || true
 umount -l ${rootfs}/var/pkg/kernel || true
 umount -l ${rootfs}/var/pkg/gitdir || true
+
+# use device or mountpoint to unmount
+#umount -l ${bootp} || true
+#umount -l ${rootp} || true
+umount -l ${bootfs} || true
 umount -l ${rootfs} || true
 
 sync
@@ -547,6 +558,8 @@ IMAGE_PATH=${IMAGE_PATH}.zip
 echo "### copy $IMAGE_PATH to $BUILD_RESULTS directory."
 mkdir -p $BUILD_RESULTS
 cp $IMAGE_PATH $BUILD_RESULTS/
+cp $BOOT_ARCHIVE $BUILD_RESULTS/
+cp $ROOT_ARCHIVE $BUILD_RESULTS/
 
 echo "### Created image ${IMAGE_PATH}."
 

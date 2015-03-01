@@ -68,3 +68,4 @@ To fix this manually use the following command on the build host:
 ```
 for loop_device in $(losetup -a | awk '{print $1};' | sed "s/:$//"); do losetup -d $loop_device; done
 ```
+
