@@ -9,13 +9,15 @@ Build a SD card image for the Raspberry Pi 1 and 2.
 
 ### Kernel deb packages
 
-The five kernel deb packages are downloaded from S3 bucket `s3://buildserver-production/kernel/` to local `build_inputs/kernel/` directory.
+The five kernel deb packages are downloaded from S3 bucket `s3://buildserver-production/kernel/<datetime>` to local `build_inputs/kernel/<datetime>` directory.
 
 * `libraspberrypi-bin_<date-time>_armhf.deb`
 * `libraspberrypi-dev_<date-time>_armhf.deb`
 * `libraspberrypi-doc_<date-time>_armhf.deb`
 * `libraspberrypi0_<date-time>_armhf.deb`
 * `raspberrypi-bootloader_<date-time>_armhf.deb`
+* `linux-headers-3.18.7-hypriotos+_3.18.7-hypriotos+-1_armhf.deb`
+* `linux-headers-3.18.7-hypriotos-v7+_3.18.7-hypriotos-v7+-2_armhf.deb`
 
 ### Docker deb package
 

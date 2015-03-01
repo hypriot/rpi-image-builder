@@ -1,4 +1,7 @@
 *~
+*.zip
+*.deb
+*.img
 
 # ignore vagrant box specific configuration
 .vagrant/

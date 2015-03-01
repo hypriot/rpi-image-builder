@@ -4,7 +4,7 @@
 _DEB_RELEASE="wheezy"					# stable | testing | unstable | jessie | wheezy | squeeze, ...
 _APT_SOURCE="${_APT_SOURCE_RASPBIAN}"
 
-_HOSTNAME="hypriot-pi"
+_HOSTNAME="black-pearl"
 _NET_CONFIG="dhcp"
 
 _USER_NAME="root"
