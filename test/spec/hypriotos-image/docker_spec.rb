@@ -10,8 +10,54 @@ describe command('dpkg -l docker-hypriot') do
   its(:exit_status) { should eq 0 }
 end
 
+describe file('/usr/bin/docker') do
+  it { should be_file }
+  it { should be_mode 755 }
+  it { should be_owned_by 'root' }
+end
+
+describe file('/usr/lib/docker/dockerinit') do
+  it { should be_file }
+  it { should be_mode 755 }
+  it { should be_owned_by 'root' }
+end
+
+describe file('/etc/init.d/docker') do
+  it { should be_file }
+  it { should be_mode 755 }
+  it { should be_owned_by 'root' }
+end
+
 describe file('/etc/default/docker') do
+  it { should be_file }
+  it { should be_mode 644 }
+  it { should be_owned_by 'root' }
   its(:content) { should match /--storage-driver=overlay/ }
+end
+
+describe file('/var/lib/docker') do
+  it { should be_directory }
+  it { should be_mode 700 }
+  it { should be_owned_by 'root' }
+end
+
+describe file('/var/lib/docker/overlay') do
+  it { should be_directory }
+  it { should be_mode 755 }
+  it { should be_owned_by 'root' }
+end
+
+describe file('/var/lib/docker/repositories-overlay') do
+  it { should be_file }
+  it { should be_mode 600 }
+  it { should be_owned_by 'root' }
+end
+
+describe file('/etc/bash_completion.d/docker') do
+  it { should be_file }
+  it { should be_mode 644 }
+  it { should be_owned_by 'root' }
+  it { should be_file }
 end
 
 describe command('docker version') do
@@ -38,6 +84,8 @@ describe service('docker') do
   it { should be_running }
 end
 
-describe file('/etc/bash_completion.d/docker') do
+describe file('/var/log/docker.log') do
   it { should be_file }
+  it { should be_mode 644 }
+  it { should be_owned_by 'root' }
 end

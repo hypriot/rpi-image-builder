@@ -34,6 +34,17 @@ describe file('/etc/sudoers.d/user-pi') do
   its(:content) { should match /pi ALL=NOPASSWD: ALL/ }
 end
 
+describe file('/root/.bashrc') do
+  it { should be_file }
+  it { should be_mode 644 }
+  it { should be_owned_by 'root' }
+end
+describe file('/root/.bash_prompt') do
+  it { should be_file }
+  it { should be_mode 644 }
+  it { should be_owned_by 'root' }
+end
+
 describe file('/home/pi/.bashrc') do
   it { should be_file }
   it { should be_mode 644 }
