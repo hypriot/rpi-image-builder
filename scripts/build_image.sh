@@ -18,7 +18,7 @@ trap 'handle_error $LINENO $?' ERR
 # set up some variables for the script
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150226-152134"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150228-222210"}
 DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="$RPI_IMAGE_BUILDER_ROOT/build_results"}
@@ -399,7 +399,9 @@ wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O - | apt-key
 curl -s -L --output /usr/bin/rpi-update https://raw.github.com/Hexxeh/rpi-update/master/rpi-update && chmod +x /usr/bin/rpi-update
 touch /boot/start.elf
 mkdir -p /lib/modules
-SKIP_BACKUP=1 /usr/bin/rpi-update
+SKIP_BACKUP=1 SKIP_KERNEL=1 /usr/bin/rpi-update
+echo 'Listing /lib/modules/'
+ls -al /lib/modules/
 
 apt-get -y install ${_APT_PACKAGES} # FIXME
 
@@ -424,6 +426,11 @@ dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-dev_${KERNEL_DATETIME}
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-bin_${KERNEL_DATETIME}_armhf.deb
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb
 echo "***** HyprIoT kernel installed *****"
+
+echo "***** Installing HyprIoT kernel headers *****"
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos+_3.18.8-hypriotos+-1_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos-v7+_3.18.8-hypriotos-v7+-2_armhf.deb
+echo "***** HyprIoT kernel headers installed *****"
 
 echo "***** Installing HyprIoT docker *****"
 dpkg -i /var/pkg/docker/deb/${DOCKER_DEB}
