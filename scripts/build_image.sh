@@ -202,7 +202,7 @@ sleep 3
 
 # create file systems
 mkfs.vfat ${bootp}
-mkfs.ext4 ${rootp}
+mkfs.ext4 ${rootp} -i 1024 # create 1 inode per 1kByte block (that's the maximum)
 
 #######################################
 
