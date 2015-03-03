@@ -18,7 +18,7 @@ trap 'handle_error $LINENO $?' ERR
 # get some info from the repo
 SHA=$(git rev-parse --short HEAD)
 MAJOR_VERSION=$(cat VERSION)
-ITTERATION= $(date +%s)
+ITTERATION=$(date +%s)
 
 # set up some variables for the script
 export LC_ALL="C"
