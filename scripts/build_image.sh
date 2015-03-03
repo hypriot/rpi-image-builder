@@ -15,6 +15,11 @@ handle_error() {
 
 trap 'handle_error $LINENO $?' ERR
 
+# get some info from the repo
+SHA := $(shell git rev-parse --short HEAD)
+MAJOR_VERSION := $(shell cat `pwd`/../VERSION)
+ITTERATION := $(shell date +%s)
+
 # set up some variables for the script
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
@@ -379,10 +384,15 @@ apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # T
 echo 'add /etc/hypriot_release file'
 cat << VERSION | tee /etc/hypriot_release
 profile: ${SETTINGS_PROFILE}
-build: ${BUILD_TIME}
-commit: ${DRONE_COMMIT}
+image build: ${BUILD_TIME}
+image commit: ${DRONE_COMMIT}
 kernel_build: ${KERNEL_DATETIME}
 kernel_commit: ${KERNEL_COMMIT}
+
+sha: ${SHA}
+major version: ${MAJOR_VERSION}
+iteration: ${ITERATION}
+
 VERSION
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl bash-completion # TODO FIXME
