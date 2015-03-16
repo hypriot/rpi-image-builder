@@ -205,3 +205,25 @@ $ diff hypriot-v6-static.txt qemu-static.txt | grep ">"
 > CONFIG_XZ_DEC=y
 > CONFIG_ZLIB_DEFLATE=y
 ```
+
+## Test the kernel options
+
+* Added the kernel options found in xxx with `make menuconfig` ot our Hypriot kernel for the Pi 1.
+* Start a build on Drone server for the updated kernel.
+* Sart a build on Drone server for the SD card image.
+
+Now download the SD card image, extract it, mount the SD card image, extract the Pi 1 kernel.img, unmount it.
+
+```bash
+aws s3 cp s3://buildserver-production/images/hypriot-rpi-20150316-153452.img.zip .
+unzip hypriot-rpi-20150316-153452.img.zip
+vagrant ssh
+sudo su
+cp /vagrant/hypriot-rpi-20150316-153452.img .
+/vagrant/scripts/mount-sd-image.sh /home/vagrant/hypriot-rpi-20150316-153452.img
+cp /mnt/pi-boot/kernel.img .
+/vagrant/scripts/unmount-sd-image.sh /home/vagrant/hypriot-rpi-20150316-153452.img
+QEMU_AUDIO_DRV=none qemu-system-arm -curses -kernel /home/vagrant/kernel.img -cpu arm1176 -m 256 -M versatilepb -append "root=/dev/sda2 rw vga=normal console=ttyAMA0,115200" -nographic -hda /home/vagrant/hypriot-rpi-20150316-153452.img -redir tcp:2222::22
+```
+
+But still hangs :-(
