@@ -208,7 +208,7 @@ $ diff hypriot-v6-static.txt qemu-static.txt | grep ">"
 
 ## Test the kernel options
 
-* Added the kernel options found in xxx with `make menuconfig` ot our Hypriot kernel for the Pi 1.
+* Added the kernel options found in http://xecdesign.com/compiling-a-kernel/ with `make menuconfig` ot our Hypriot kernel for the Pi 1.
 * Start a build on Drone server for the updated kernel.
 * Sart a build on Drone server for the SD card image.
 
