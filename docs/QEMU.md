@@ -26,6 +26,14 @@ See also
 * http://www.raspberry-pi-geek.de/Magazin/2014/04/Raspberry-Pi-emulieren
 * http://www.cnx-software.com/2011/10/18/raspberry-pi-emulator-in-ubuntu-with-qemu/
 
+Download a patch
+
+```bash
+cd /var/kernel_build/cache
+wget http://xecdesign.com/downloads/linux-qemu/linux-arm.patch
+patch -p1 -d linux-kernel/ < linux-arm.patch
+```
+
 The relevant part is to preconfigure the kernel config with
 
 ```bash
@@ -34,6 +42,71 @@ make ARCH=arm menuconfig
 ```
 
 This turns off many RPi specific hardware that QEMU can't emulate.
+
+### More things learned
+
+Cross compilation of a QEMU kernel seems to be better with the standard cross compiler,
+so we install it inside the VM.
+
+```
+vagrant ssh
+sudo su
+apt-get install -y gcc-arm-linux-gnueabihf
+cd /var/kernel_build/linux-kernel/
+patch -p1 -d . < ../linux-arm.patch
+make ARCH=arm versatile_defconfig
+make ARCH=arm menuconfig
+```
+
+Add the kernel config as described in http://xecdesign.com/compiling-a-kernel/
+
+We also set
+
+* File Systems -> overlay
+* File Systems -> msdos + vfat
+* Network -> IPv6
+
+
+Patch one of the kernel sources to compile with gcc 4.8.2
+
+```
+diff --git a/arch/arm/kernel/asm-offsets.c b/arch/arm/kernel/asm-offsets.c
+index 2d2d608..75fd051 100644
+--- a/arch/arm/kernel/asm-offsets.c
++++ b/arch/arm/kernel/asm-offsets.c
+@@ -49,7 +49,7 @@
+ #error Your compiler is too buggy; it is known to miscompile kernels.
+ #error    Known good compilers: 3.3, 4.x
+ #endif
+-#if GCC_VERSION >= 40800 && GCC_VERSION < 40803
++#if GCC_VERSION >= 40800 && GCC_VERSION < 40802
+ #error Your compiler is too buggy; it is known to miscompile kernels
+ #error and result in filesystem corruption and oopses.
+ #endif
+```
+
+Then compile the QEMU kernel with these command and copy the output to vagrant's shared folder.
+
+```
+make ARCH=arm -j8 -k
+cp arch/arm/boot/zImage /vagrant/
+```
+
+Take this kernel to the rpi-image-builder VM
+
+```
+cp /vagrant/zImage /home/vagrant/
+QEMU_AUDIO_DRV=none qemu-system-arm -curses -kernel /home/vagrant/zImage -cpu arm1176 -m 256 -M versatilepb -append "root=/dev/sda2 rw vga=normal console=ttyAMA0,115200" -nographic -hda /home/vagrant/hypriot-rpi-20150316-153452.img -redir tcp:2222::22
+```
+
+Log into QEMU
+
+```
+$ uname -a
+Linux black-pearl 3.18.9-hypriotos+ #9 Tue Mar 17 17:24:54 UTC 2015 armv6l GNU/Linux
+HypriotOS: root@black-pearl in ~
+```
+
 
 ## Kernel config of kernel-qemu
 
