@@ -21,6 +21,19 @@ This could be the essential diff:
 
 From http://xecdesign.com/compiling-a-kernel/ and http://xecdesign.com/qemu-emulating-raspberry-pi-the-easy-way/
 
+See also
+
+* http://www.raspberry-pi-geek.de/Magazin/2014/04/Raspberry-Pi-emulieren
+* http://www.cnx-software.com/2011/10/18/raspberry-pi-emulator-in-ubuntu-with-qemu/
+
+The relevant part is to preconfigure the kernel config with
+
+```bash
+make ARCH=arm versatile_defconfig
+make ARCH=arm menuconfig
+```
+
+This turns off many RPi specific hardware that QEMU can't emulate.
 
 ## Kernel config of kernel-qemu
 
@@ -227,3 +240,7 @@ QEMU_AUDIO_DRV=none qemu-system-arm -curses -kernel /home/vagrant/kernel.img -cp
 ```
 
 But still hangs :-(
+
+## Stop QEMU
+
+Press `ctrl+a c` to switch between console and monitor. Here you can enter `quit` to stop QEMU and return to your unix shell.
