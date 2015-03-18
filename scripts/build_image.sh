@@ -18,7 +18,7 @@ trap 'handle_error $LINENO $?' ERR
 # set up some variables for the script
 export LC_ALL="C"
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150317-004010"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150318-220127"}
 DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="$RPI_IMAGE_BUILDER_ROOT/build_results"}
@@ -346,10 +346,12 @@ dpkg-reconfigure -f noninteractive tzdata
 echo 'Reconfigured timezone' >> /dev/kmsg
 
 
-# Expand filesystem
-echo 'Expanding rootfs ...' >> /dev/kmsg
-raspi-config --expand-rootfs
-echo 'Expand rootfs done' >> /dev/kmsg
+# Expand filesystem, but only on real device, not in QEMU
+if [ ! -e /dev/sda ]; then
+  echo 'Expanding rootfs ...' >> /dev/kmsg
+  raspi-config --expand-rootfs
+  echo 'Expand rootfs done' >> /dev/kmsg
+fi
 
 sleep 5
 
