@@ -46,3 +46,9 @@ Now run a full docker test. This does a full cycle with `docker pull` and `docke
 ```
 PI=pi4 bin/rspec spec/hypriotos-docker
 ```
+
+### Run tests in QEMU
+
+```bash
+PORT=2222 PI=localhost bin/rspec spec/hypriotos-image
+```
