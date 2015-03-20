@@ -32,8 +32,6 @@ mkdir -p ${BUILD_INPUTS}/kernel/$KERNEL_DATETIME
 touch ${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt
 KERNEL_COMMIT=${KERNEL_COMMIT:=$(<${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt)}
 
-SETTINGS_PROFILE="hypriot"
-
 # locate path of RPi kernel
 kernel_path="$BUILD_INPUTS/kernel"
 mkdir -p $kernel_path
