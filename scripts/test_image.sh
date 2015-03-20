@@ -30,8 +30,8 @@ IMAGE="$(basename -s .zip $ZIP_IMAGE_PATH)"
 
 echo "###############"
 echo "### Testing SD card image $IMAGE_PATH"
-echo "### pwd ..."
-pwd
+echo "### df -h ..."
+df -h
 
 if [ -f $ZIP_IMAGE_PATH ]; then
   # run serverspec tests
@@ -50,7 +50,8 @@ if [ -f $ZIP_IMAGE_PATH ]; then
 
   # wait until we can SSH into the HypriotOS in QEMU
   echo "### Waiting for QEMU RPi to boot"
-  if [ ! -e /dev/pts ]; then
+  if [ ! -e /vagrant ]; then
+    # sshpass doesn't work fine in drone container
     sleep 150
   else
     COUNTER=1
