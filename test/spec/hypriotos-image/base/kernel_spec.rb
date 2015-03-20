@@ -19,24 +19,6 @@ describe file('/lib/modules/3.18.9-v7+') do
   it { should_not be_directory }
 end
 
-Specinfra::Runner.run_command('modprobe btrfs')
-describe kernel_module('btrfs') do
-  it { should be_loaded }
-end
-
-Specinfra::Runner.run_command('modprobe overlay')
-describe kernel_module('overlay') do
-  it { should be_loaded }
-end
-
-describe file('/boot/cmdline.txt') do
-  it { should be_file }
-  its(:content) { should match /console=tty1/ }
-  its(:content) { should match /rootfstype=ext4/ }
-  its(:content) { should match /cgroup-enable=memory/ }
-  its(:content) { should match /swapaccount=1/ }
-end
-
 # with installed kernel headers
 describe file('/lib/modules/3.18.9-hypriotos+/build') do
   it { should be_symlink }

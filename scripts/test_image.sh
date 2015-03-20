@@ -4,9 +4,11 @@ set -ex
 # set up error handling for cleaning up
 # after having an error
 handle_error() {
-  echo "FAILED: line $1, exit code $2"
-  echo "Killing remaining QEMU"
+  echo "### FAILED: line $1, exit code $2"
+  echo "### Killing remaining QEMU"
   killall qemu-system-arm
+  echo "### Removing SD image"
+  rm -f *.img
   exit 1
 }
 
@@ -32,6 +34,11 @@ echo "### pwd ..."
 pwd
 
 if [ -f $ZIP_IMAGE_PATH ]; then
+  # run serverspec tests
+  echo "### installing serverspec"
+  cd ${RPI_IMAGE_BUILDER_ROOT}/test
+  bundle install
+
   echo "### Extracting $ZIP_IMAGE_PATH"
   unzip -o $ZIP_IMAGE_PATH
 
@@ -40,11 +47,6 @@ if [ -f $ZIP_IMAGE_PATH ]; then
     -cpu arm1176 -m 256 -M versatilepb -append \
     "root=/dev/sda2 rw vga=normal console=ttyAMA0,115200" -nographic \
     -hda ${IMAGE} -redir tcp:2222::22 &
-
-  # run serverspec tests
-  echo "### installing serverspec"
-  cd ${RPI_IMAGE_BUILDER_ROOT}/test
-  bundle install
 
   # wait until we can SSH into the HypriotOS in QEMU
   echo "### Waiting for QEMU RPi to boot"
@@ -63,4 +65,10 @@ if [ -f $ZIP_IMAGE_PATH ]; then
   # run serverspec tests
   echo "### Running serverspec tests"
   PORT=2222 PI=localhost ${RPI_IMAGE_BUILDER_ROOT}/test/bin/rspec ${RPI_IMAGE_BUILDER_ROOT}/test/spec/hypriotos-image
+
+  echo "### Stopping QEMU RPi"
+  killall qemu-system-arm
+
+  echo "### Removing Image"
+  rm -f *.img
 fi

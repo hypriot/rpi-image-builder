@@ -50,5 +50,5 @@ PI=pi4 bin/rspec spec/hypriotos-docker
 ### Run tests in QEMU
 
 ```bash
-PORT=2222 PI=localhost bin/rspec spec/hypriotos-image
+PORT=2222 PI=localhost bin/rspec spec/hypriotos-image/base
 ```
