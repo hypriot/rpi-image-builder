@@ -355,11 +355,10 @@ if [ ! -e /dev/sda ]; then
   echo 'Expanding rootfs ...' >> /dev/kmsg
   raspi-config --expand-rootfs
   echo 'Expand rootfs done' >> /dev/kmsg
+
+  sleep 5
+  reboot
 fi
-
-sleep 5
-
-reboot
 
 " > root/firstboot.sh
 chmod 755 root/firstboot.sh
