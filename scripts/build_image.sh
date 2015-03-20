@@ -182,7 +182,7 @@ BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 IMAGE_PATH=""
 IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img"
-dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1024
+dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1280
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
@@ -202,7 +202,7 @@ sleep 3
 
 # create file systems
 mkfs.vfat ${bootp}
-mkfs.ext4 ${rootp}
+mkfs.ext4 ${rootp} -i 4096 # create 1 inode per 4kByte block (maximum ratio is 1 per 1kByte)
 
 #######################################
 
