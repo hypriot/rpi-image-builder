@@ -51,10 +51,10 @@ if [ -f $ZIP_IMAGE_PATH ]; then
   # wait until we can SSH into the HypriotOS in QEMU
   echo "### Waiting for QEMU RPi to boot"
   if [ ! -e /dev/pts ]; then
-    sleep 120
+    sleep 150
   else
     COUNTER=1
-    while [ "$COUNTER" -le "120" ] ; do
+    while [ "$COUNTER" -le "150" ] ; do
       sshpass -p hypriot ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 2222 root@localhost exit 0 && break
       sleep 1
       COUNTER=$[$COUNTER +1]
