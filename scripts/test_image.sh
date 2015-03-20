@@ -42,10 +42,12 @@ if [ -f $ZIP_IMAGE_PATH ]; then
     -hda ${IMAGE} -redir tcp:2222::22 &
 
   # wait until we can SSH into the HypriotOS in QEMU
-  while true ; do
+  COUNTER=1
+  while [ "$COUNTER" -le "120" ] ; do
     sshpass -p hypriot ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 2222 root@localhost exit 0 && break
     echo 'Waiting for remote sshd...'
     sleep 1
+    COUNTER=$[$COUNTER +1]
   done
   sleep 30
 
