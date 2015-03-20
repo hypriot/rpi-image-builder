@@ -37,6 +37,7 @@ if [ -f $ZIP_IMAGE_PATH ]; then
   # run serverspec tests
   echo "### installing serverspec"
   cd ${RPI_IMAGE_BUILDER_ROOT}/test
+  rm -rf vendor/
   bundle install
 
   echo "### Extracting $ZIP_IMAGE_PATH"
@@ -65,7 +66,7 @@ if [ -f $ZIP_IMAGE_PATH ]; then
 
   # run serverspec tests
   echo "### Running serverspec tests"
-  PORT=2222 PI=localhost ${RPI_IMAGE_BUILDER_ROOT}/test/bin/rspec ${RPI_IMAGE_BUILDER_ROOT}/test/spec/hypriotos-image
+  PORT=2222 PI=localhost bin/rspec spec/hypriotos-image/base
 
   echo "### Stopping QEMU RPi"
   killall qemu-system-arm
