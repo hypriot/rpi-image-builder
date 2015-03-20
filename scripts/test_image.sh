@@ -5,11 +5,8 @@ set -ex
 # after having an error
 handle_error() {
   echo "FAILED: line $1, exit code $2"
-  echo "Removing loop device"
-  # ensure we are outside mounted image filesystem
-  cd /
-  # remove loop device for image
-  kpartx -vds ${IMAGE_PATH}
+  echo "Killing remaining QEMU"
+  killall qemu-system-arm
   exit 1
 }
 
@@ -27,6 +24,11 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . ${DIR}/config.sh
 
 IMAGE_PATH="$(ls -1t ${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-*.img | head -1)"
+
+echo "###############"
+echo "### Testing SD card image $IMAGE_PATH"
+
+sudo apt-get install -y ruby
 
 if [ -f $IMAGE_PATH ]; then
   # start HypriotOS in QEMU for five minutes
