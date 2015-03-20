@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 set -ex
 
 # set up error handling for cleaning up
@@ -23,25 +23,34 @@ BUILD_INPUTS=${BUILD_INPUTS:="$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 . ${DIR}/config.sh
 
-IMAGE_PATH="$(ls -1t ${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-*.img | head -1)"
+ZIP_IMAGE_PATH="$(ls -1t ${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-*.img.zip | head -1)"
+IMAGE="$(basename -s .zip $ZIP_IMAGE_PATH)"
 
 echo "###############"
 echo "### Testing SD card image $IMAGE_PATH"
+echo "### pwd ..."
+pwd
 
-sudo apt-get install -y ruby
+if [ -f $ZIP_IMAGE_PATH ]; then
+  echo "### Extracting $ZIP_IMAGE_PATH"
+  unzip -o $ZIP_IMAGE_PATH
 
-if [ -f $IMAGE_PATH ]; then
   # start HypriotOS in QEMU for five minutes
   QEMU_AUDIO_DRV=none timeout 5m qemu-system-arm -curses -kernel $BUILD_INPUTS/kernel/${KERNEL_DATETIME}/kernel-qemu \
     -cpu arm1176 -m 256 -M versatilepb -append \
     "root=/dev/sda2 rw vga=normal console=ttyAMA0,115200" -nographic \
-    -hda ${IMAGE_PATH} -redir tcp:2222::22 &
+    -hda ${IMAGE} -redir tcp:2222::22 &
 
   # wait until we can SSH into the HypriotOS in QEMU
-  # TODO
+  while true ; do
+    sshpass -p hypriot ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 2222 root@localhost exit 0 && break
+    echo 'Waiting for remote sshd...'
+    sleep 1
+  done
+  sleep 30
 
   # run serverspec tests
-  cd test
+  cd ${RPI_IMAGE_BUILDER_ROOT}/test
   bundle install
-  PORT=2222 PI=localhost bin/rspec spec/hypriotos-image
+  PORT=2222 PI=localhost ${RPI_IMAGE_BUILDER_ROOT}/test/bin/rspec ${RPI_IMAGE_BUILDER_ROOT}/test/spec/hypriotos-image
 fi
