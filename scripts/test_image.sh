@@ -41,18 +41,26 @@ if [ -f $ZIP_IMAGE_PATH ]; then
     "root=/dev/sda2 rw vga=normal console=ttyAMA0,115200" -nographic \
     -hda ${IMAGE} -redir tcp:2222::22 &
 
+  # run serverspec tests
+  echo "### installing serverspec"
+  cd ${RPI_IMAGE_BUILDER_ROOT}/test
+  bundle install
+
   # wait until we can SSH into the HypriotOS in QEMU
-  COUNTER=1
-  while [ "$COUNTER" -le "120" ] ; do
-    sshpass -p hypriot ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 2222 root@localhost exit 0 && break
-    echo 'Waiting for remote sshd...'
-    sleep 1
-    COUNTER=$[$COUNTER +1]
-  done
+  echo "### Waiting for QEMU RPi to boot"
+  if [ ! -e /dev/pts ]; then
+    sleep 120
+  else
+    COUNTER=1
+    while [ "$COUNTER" -le "120" ] ; do
+      sshpass -p hypriot ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 2222 root@localhost exit 0 && break
+      sleep 1
+      COUNTER=$[$COUNTER +1]
+    done
+  fi
   sleep 30
 
   # run serverspec tests
-  cd ${RPI_IMAGE_BUILDER_ROOT}/test
-  bundle install
+  echo "### Running serverspec tests"
   PORT=2222 PI=localhost ${RPI_IMAGE_BUILDER_ROOT}/test/bin/rspec ${RPI_IMAGE_BUILDER_ROOT}/test/spec/hypriotos-image
 fi
