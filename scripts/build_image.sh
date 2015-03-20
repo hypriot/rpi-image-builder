@@ -17,9 +17,12 @@ trap 'handle_error $LINENO $?' ERR
 
 # set up some variables for the script
 export LC_ALL="C"
+
+# read configuration
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. ${DIR}/config.sh
+
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150318-231448"}
-DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="$RPI_IMAGE_BUILDER_ROOT/build_results"}
 BUILD_INPUTS=${BUILD_INPUTS:="$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
@@ -430,8 +433,8 @@ dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-doc_${KERNEL_DATETIME}
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT kernel headers *****"
-dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.9-hypriotos+_3.18.9-hypriotos+-1_armhf.deb
-dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.9-hypriotos-v7+_3.18.9-hypriotos-v7+-2_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos+_${KERNEL_VERSION}-hypriotos+-1_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos-v7+_${KERNEL_VERSION}-hypriotos-v7+-2_armhf.deb
 echo "***** HyprIoT kernel headers installed *****"
 
 echo "***** Installing HyprIoT docker *****"
