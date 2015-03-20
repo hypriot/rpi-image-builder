@@ -32,6 +32,9 @@ mkdir -p ${BUILD_INPUTS}/kernel/$KERNEL_DATETIME
 touch ${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt
 KERNEL_COMMIT=${KERNEL_COMMIT:=$(<${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt)}
 
+echo "###############"
+echo "### Build results will go to $BUILD_RESULTS"
+
 # locate path of RPi kernel
 kernel_path="$BUILD_INPUTS/kernel"
 mkdir -p $kernel_path
@@ -486,7 +489,7 @@ get_apt_sources_list > etc/apt/sources.list
 
 ###################
 # cleanup
-echo "cleanup ..."
+echo "### cleanup ..."
 echo "#!/bin/bash -x
 apt-get update
 apt-get clean
