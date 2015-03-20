@@ -41,7 +41,7 @@ sudo apt-get install -y python-pip build-essential libncurses5-dev tree binfmt-s
 sudo pip install awscli
 
 # needed for servespec tests
-sudo apt-get install -y ruby psmisc
+sudo apt-get install -y ruby psmisc sshpass
 sudo gem install bundler
 }
 
