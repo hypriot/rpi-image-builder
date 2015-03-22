@@ -418,6 +418,7 @@ rm -f raspi-config_20131216-1_all.deb
 
 apt-get -y install rng-tools
 apt-get -y install sudo
+apt-get -y install htop
 
 echo "***** Installing HyprIoT kernel *****"
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
