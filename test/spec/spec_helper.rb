@@ -18,11 +18,15 @@ host = ENV['PI']
 unless host
   fail "No PI env with the target address given!"
 end
+port = ENV['PORT']
 
 options = Net::SSH::Config.for(host)
 
 options[:user] ||= 'root'
 options[:password] ||= 'hypriot'
+if port
+  options[:port] = port
+end
 
 set :host,        options[:host_name] || host
 set :ssh_options, options

@@ -17,9 +17,12 @@ trap 'handle_error $LINENO $?' ERR
 
 # set up some variables for the script
 export LC_ALL="C"
+
+# read configuration
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. ${DIR}/config.sh
+
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150228-222210"}
-DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="$RPI_IMAGE_BUILDER_ROOT/build_results"}
 BUILD_INPUTS=${BUILD_INPUTS:="$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
@@ -29,7 +32,8 @@ mkdir -p ${BUILD_INPUTS}/kernel/$KERNEL_DATETIME
 touch ${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt
 KERNEL_COMMIT=${KERNEL_COMMIT:=$(<${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt)}
 
-SETTINGS_PROFILE="hypriot"
+echo "###############"
+echo "### Build results will go to $BUILD_RESULTS"
 
 # locate path of RPi kernel
 kernel_path="$BUILD_INPUTS/kernel"
@@ -346,14 +350,15 @@ dpkg-reconfigure -f noninteractive tzdata
 echo 'Reconfigured timezone' >> /dev/kmsg
 
 
-# Expand filesystem
-echo 'Expanding rootfs ...' >> /dev/kmsg
-raspi-config --expand-rootfs
-echo 'Expand rootfs done' >> /dev/kmsg
+# Expand filesystem, but only on real device, not in QEMU
+if [ ! -e /dev/sda ]; then
+  echo 'Expanding rootfs ...' >> /dev/kmsg
+  raspi-config --expand-rootfs
+  echo 'Expand rootfs done' >> /dev/kmsg
 
-sleep 5
-
-reboot
+  sleep 5
+  reboot
+fi
 
 " > root/firstboot.sh
 chmod 755 root/firstboot.sh
@@ -429,8 +434,8 @@ dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-doc_${KERNEL_DATETIME}
 echo "***** HyprIoT kernel installed *****"
 
 echo "***** Installing HyprIoT kernel headers *****"
-dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos+_3.18.8-hypriotos+-1_armhf.deb
-dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos-v7+_3.18.8-hypriotos-v7+-2_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos+_${KERNEL_VERSION}-hypriotos+-1_armhf.deb
+dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos-v7+_${KERNEL_VERSION}-hypriotos-v7+-2_armhf.deb
 echo "***** HyprIoT kernel headers installed *****"
 
 echo "***** Installing HyprIoT docker *****"
@@ -484,7 +489,7 @@ get_apt_sources_list > etc/apt/sources.list
 
 ###################
 # cleanup
-echo "cleanup ..."
+echo "### cleanup ..."
 echo "#!/bin/bash -x
 apt-get update
 apt-get clean

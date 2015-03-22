@@ -39,6 +39,10 @@ sudo apt-get install -y python-pip build-essential libncurses5-dev tree binfmt-s
 
 # needed to fetch packages from s3
 sudo pip install awscli
+
+# needed for servespec tests
+sudo apt-get install -y ruby psmisc sshpass
+sudo gem install bundler
 }
 
 export DEBIAN_FRONTEND=noninteractive
@@ -46,4 +50,3 @@ export DEBIAN_FRONTEND=noninteractive
 update_package_sources
 setup_apt_fast
 install_prerequisites
-

@@ -1,7 +1,10 @@
 #!/bin/bash
-set -x
-set -e
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150228-222210"}
+set -ex
+
+# read configuration
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. ${DIR}/config.sh
+
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
 BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
 
@@ -11,10 +14,11 @@ KERNEL_PACKAGES="kernel/${KERNEL_DATETIME}/libraspberrypi-bin_${KERNEL_DATETIME}
                  kernel/${KERNEL_DATETIME}/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb \
                  kernel/${KERNEL_DATETIME}/libraspberrypi0_${KERNEL_DATETIME}_armhf.deb \
                  kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb \
-                 kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos+_3.18.8-hypriotos+-1_armhf.deb \
-                 kernel/${KERNEL_DATETIME}/linux-headers-3.18.8-hypriotos-v7+_3.18.8-hypriotos-v7+-2_armhf.deb \
+                 kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos+_${KERNEL_VERSION}-hypriotos+-1_armhf.deb \
+                 kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos-v7+_${KERNEL_VERSION}-hypriotos-v7+-2_armhf.deb \
+                 kernel/${KERNEL_DATETIME}/kernel-qemu \
                  kernel/${KERNEL_DATETIME}/kernel-commit.txt"
-DOCKER_PACKAGES="docker/deb/docker-hypriot_1.5.0-7_armhf.deb"
+DOCKER_PACKAGES="docker/deb/${DOCKER_DEB}"
 PACKAGES="$KERNEL_PACKAGES $DOCKER_PACKAGES"
 
 # ensure that the target directories exist

@@ -37,7 +37,23 @@ To build the SD card image locally with Vagrant, enter
 vagrant up
 ```
 
-**FIX:** It is unclear to the author how AWS environments will be transported into the VM.
+### Analyze the SD card image
+
+In the vagrant box you can mount and unmount the SD card image with two helper scripts
+
+```bash
+vagrant ssh
+/vagrant/scripts/mount-sd-image.sh /build_env/images/hypriot*.img
+```
+
+The two partitions are mounted to `/mnt/pi-boot` and `mnt/pi-root` where you can modify things.
+Afterwards unmount everything with
+
+```bash
+/vagrant/scripts/unmount-sd-image.sh /build_env/images/hypriot*.img
+```
+
+Your changes are written into the SD card image file.
 
 ## Build with Drone
 
