@@ -130,14 +130,13 @@ set_network_config () {
 auto lo
 iface lo inet loopback
 
-auto eth0
+allow-hotplug eth0
 iface eth0 inet dhcp
 iface eth0 inet6 auto
-allow hotplug eth0
 
 allow-hotplug wlan0
 iface wlan0 inet manual
-wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 iface default inet dhcp
 " > ${_NET_CONFIG_FILE}
 				;;
@@ -414,6 +413,9 @@ kernel_commit: ${KERNEL_COMMIT}
 VERSION
 
 apt-get -y install fake-hwclock occi bash-completion
+
+# patch /usr/bin/occi to improve finding wlan interface
+sed -i "s/'ifconfig', '-s'/'ifconfig', '-a'/" /usr/bin/occi
 
 # add docker bash completion
 curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
