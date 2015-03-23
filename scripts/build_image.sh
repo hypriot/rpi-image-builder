@@ -379,7 +379,7 @@ echo 'force-unsafe-io' | tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
 
 apt-get update
 
-apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # TODO FIXME
+apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl fake-hwclock
 
 echo 'add /etc/hypriot_release file'
 cat << VERSION | tee /etc/hypriot_release
