@@ -393,13 +393,15 @@ rm -f /debconf.set
 # make dpkg run faster
 echo 'force-unsafe-io' | tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
 
-# install occi
-echo 'deb http://apt.adafruit.com/raspbian/ wheezy main' >> etc/apt/sources.list
-wget -O - -q https://apt.adafruit.com/apt.adafruit.com.gpg.key | apt-key add -
-
 apt-get update
 
-apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl fake-hwclock occi
+apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl
+
+# install occi
+echo 'deb http://apt.adafruit.com/raspbian/ wheezy main' >> etc/apt/sources.list
+wget https://apt.adafruit.com/apt.adafruit.com.gpg.key -O - | apt-key add -
+
+apt-get update
 
 echo 'add /etc/hypriot_release file'
 cat << VERSION | tee /etc/hypriot_release
@@ -411,7 +413,7 @@ kernel_commit: ${KERNEL_COMMIT}
 
 VERSION
 
-apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl bash-completion # TODO FIXME
+apt-get -y install fake-hwclock occi bash-completion
 
 # add docker bash completion
 curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
