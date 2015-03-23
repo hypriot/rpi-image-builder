@@ -1,7 +1,24 @@
 #!/bin/bash
+# Flash Raspberry Pi SD card images on your Mac
+# Stefan Scherer - scherer_stefan@icloud.com
+# MIT License
 
 function usage {
-  echo "Usage: $0 name-of-rpi.img"
+  echo "Usage: $0 name-of-rpi.img [name-of-occidentalis.txt]"
+  echo ""
+  echo "Flash a local or remote Raspberry Pi SD card image on your Mac."
+  echo ""
+  echo "Optionally customize your Pi image with a hostname and your WiFi settings."
+  echo "Example for the occidentalis.txt file:"
+  echo ""
+  echo "# hostname for your Hypriot Raspberry Pi:
+hostname=your-pi-hostname
+
+#
+# basic wireless networking options:
+# wifi_ssid=your-wifi-ssid
+# wifi_password=your-wifi-preshared-key
+"
   exit 1
 }
 
@@ -16,6 +33,12 @@ if [ "$1" == "--help" ]; then
 fi
 
 image=$1
+
+occi=$2
+
+if [ "$1" == "--help" ]; then
+  usage
+fi
 
 if beginswith http:// "$image"; then
   echo "Downloading $image ..."
@@ -75,12 +98,27 @@ echo "Flashing $image to ${disk} ..."
 pv=`which pv 2>/dev/null`
 if [ $? -eq 0 ]; then
   size=`stat -f %z $image`
-  cat $image | pv -s $size | sudo dd bs=1m of=/dev/r${disk}
+  sudo cat $image | pv -s $size | sudo dd bs=1m of=/dev/r${disk}
 else
   echo "No `pv` command found, so no progress available."
   echo "Press CTRL+T if you want to see the current info of dd command."
   sudo dd bs=1m if=$image of=/dev/r${disk}
 fi
+
+if [ -f "$occi" ]; then
+  # try to find the correct disk again
+  boot=$(df | grep /dev/${disk}s1 | sed 's,.*/Volumes,/Volumes,')
+  if [ "$boot" == "" ]; then
+    while [ "$boot" == "" ]; do
+      sleep 1
+      boot=$(df | grep /dev/${disk}s1 | sed 's,.*/Volumes,/Volumes,')
+    done
+  fi
+
+  echo "Copying $occi to ${boot}/occidentalis.txt ..."
+  cp "$occi"  "${boot}/occidentalis.txt"
+fi
+
 echo "Unmounting and ejecting ${disk} ..."
 sleep 1
 diskutil unmountDisk /dev/${disk}s1
