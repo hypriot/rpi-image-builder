@@ -399,7 +399,7 @@ apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl
 
 # install occi
 echo 'deb http://apt.adafruit.com/raspbian/ wheezy main' >> etc/apt/sources.list
-wget https://apt.adafruit.com/apt.adafruit.com.gpg.key -O - | apt-key add -
+wget -q https://apt.adafruit.com/apt.adafruit.com.gpg.key -O - | apt-key add -
 
 apt-get update
 
