@@ -384,10 +384,11 @@ apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl # T
 echo 'add /etc/hypriot_release file'
 cat << VERSION | tee /etc/hypriot_release
 profile: ${SETTINGS_PROFILE}
-build: ${BUILD_TIME}
-commit: ${DRONE_COMMIT}
+image_build: ${BUILD_TIME}
+image_commit: ${DRONE_COMMIT}
 kernel_build: ${KERNEL_DATETIME}
 kernel_commit: ${KERNEL_COMMIT}
+
 VERSION
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl bash-completion # TODO FIXME
