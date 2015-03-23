@@ -394,7 +394,7 @@ rm -f /debconf.set
 echo 'force-unsafe-io' | tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
 
 # install occi
-echo 'deb http://apt.adafruit.com/raspbian/ wheezy main' >> /etc/apt/sources.list
+echo 'deb http://apt.adafruit.com/raspbian/ wheezy main' >> etc/apt/sources.list
 wget -O - -q https://apt.adafruit.com/apt.adafruit.com.gpg.key | apt-key add -
 
 apt-get update
