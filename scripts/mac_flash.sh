@@ -97,8 +97,10 @@ diskutil unmountDisk /dev/${disk}
 echo "Flashing $image to ${disk} ..."
 pv=`which pv 2>/dev/null`
 if [ $? -eq 0 ]; then
-  size=`stat -f %z $image`
-  sudo cat $image | pv -s $size | sudo dd bs=1m of=/dev/r${disk}
+  # this sudo here is used for a login without pv's progress bar
+  # hiding the password prompt
+  size=`sudo stat -f %z $image`
+  cat $image | pv -s $size | sudo dd bs=1m of=/dev/r${disk}
 else
   echo "No `pv` command found, so no progress available."
   echo "Press CTRL+T if you want to see the current info of dd command."
