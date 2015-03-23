@@ -277,6 +277,16 @@ get_apt_sources_list > etc/apt/sources.list
 # boot/cmdline.txt
 echo "+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 cgroup-enable=memory swapaccount=1 elevator=deadline rootwait console=ttyAMA0,115200 kgdboc=ttyAMA0,115200" > boot/cmdline.txt
 
+# boot/occidentalis.txt (occi)
+echo "
+# hostname for your Hypriot Raspberry Pi:
+hostname=black-pearl
+
+# basic wireless networking options:
+# wifi_ssid=your-ssid
+# wifi_password=your-presharedkey
+" > boot/occidentalis.txt
+
 # etc/fstab
 echo "${_FSTAB}" > etc/fstab
 
@@ -377,9 +387,13 @@ rm -f /debconf.set
 # make dpkg run faster
 echo 'force-unsafe-io' | tee etc/dpkg/dpkg.cfg.d/02apt-speedup > /dev/null
 
+# install occi
+echo 'deb http://apt.adafruit.com/raspbian/ wheezy main' >> /etc/apt/sources.list
+wget -O - -q https://apt.adafruit.com/apt.adafruit.com.gpg.key | apt-key add -
+
 apt-get update
 
-apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl fake-hwclock
+apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl fake-hwclock occi
 
 echo 'add /etc/hypriot_release file'
 cat << VERSION | tee /etc/hypriot_release
