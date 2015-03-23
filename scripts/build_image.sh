@@ -415,7 +415,7 @@ VERSION
 apt-get -y install ntpdate fake-hwclock occi bash-completion
 
 # patch /usr/bin/occi to improve finding wlan interface
-sed -i "s/'ifconfig', '-s'/'ifconfig', '-a'/" /usr/bin/occi
+sed -i s/\'ifconfig\',\ \'-s\'/\'ifconfig\',\ \'-a\'/ /usr/bin/occi
 
 # add docker bash completion
 curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
