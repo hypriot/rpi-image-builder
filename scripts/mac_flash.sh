@@ -1,7 +1,8 @@
 #!/bin/bash
 # Flash Raspberry Pi SD card images on your Mac
 # Stefan Scherer - scherer_stefan@icloud.com
-# MIT License
+# http://blog.hypriot.com
+# MIT License - The Hypriot Team
 
 function usage {
   echo "Usage: $0 name-of-rpi.img [name-of-occidentalis.txt]"
