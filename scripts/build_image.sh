@@ -412,7 +412,7 @@ kernel_commit: ${KERNEL_COMMIT}
 
 VERSION
 
-apt-get -y install ntpdate fake-hwclock occi avahi-daemon bash-completion
+apt-get -y install ntpdate fake-hwclock occi avahi-daemon usbutils bash-completion
 
 # patch /usr/bin/occi to improve finding wlan interface
 sed -i s/\'ifconfig\',\ \'-s\'/\'ifconfig\',\ \'-a\'/ /usr/bin/occi
