@@ -438,17 +438,14 @@ apt-get -y install ${_APT_PACKAGES} # FIXME
 rm -f /etc/ssh/ssh_host_*
 
 
-apt-get -y install lua5.1 triggerhappy
-apt-get -y install dmsetup parted
+apt-get -y install lua5.1 triggerhappy dmsetup parted
 
 wget -q http://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20131216-1_all.deb
 dpkg -i raspi-config_20131216-1_all.deb
 rm -f raspi-config_20131216-1_all.deb
 
 
-apt-get -y install rng-tools
-apt-get -y install sudo
-apt-get -y install htop
+apt-get -y install rng-tools sudo htop
 
 echo "***** Installing HyprIoT kernel *****"
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
