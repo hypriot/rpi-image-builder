@@ -1,37 +1,80 @@
 #!/bin/bash
 # Flash Raspberry Pi SD card images on your Mac
 # Stefan Scherer - scherer_stefan@icloud.com
-# http://blog.hypriot.com
-# MIT License - The Hypriot Team
+# MIT License
 
-function usage {
-  echo "Usage: $0 name-of-rpi.img [name-of-occidentalis.txt]"
-  echo ""
-  echo "Flash a local or remote Raspberry Pi SD card image on your Mac."
-  echo ""
-  echo "Optionally customize your Pi image with a hostname and your WiFi settings."
-  echo "Example for the occidentalis.txt file:"
-  echo ""
-  echo "# hostname for your Hypriot Raspberry Pi:
-hostname=your-pi-hostname
 
-#
+usage()
+{
+cat << EOF
+usage: $0 [options] name-of-rpi.img
+
+Flash a local or remote Raspberry Pi SD card image.
+
+OPTIONS:
+   --help|-h      Show this message
+   --config|-c    Copy this config file to /boot/occidentalis.txt
+   --hostname|-n  Set hostname for this SD image
+   --ssid|-s      Set WiFi SSID for this SD image
+   --password|-p  Set WiFI password for this SD image
+
+The config file occidentalis.txt should look like
+
+# hostname for your Hypriot Raspberry Pi:
+hostname = hypriot-pi
+
 # basic wireless networking options:
-# wifi_ssid=your-wifi-ssid
-# wifi_password=your-wifi-preshared-key
-"
-  exit 1
+wifi_ssid = SSID
+wifi_password = 12345
+EOF
+exit 1
 }
+
+# translate long options to short
+for arg
+do
+    delim=""
+    case "$arg" in
+       --help) args="${args}-h ";;
+       --verbose) args="${args}-v ";;
+       --config) args="${args}-c ";;
+       --hostname) args="${args}-n ";;
+       --ssid) args="${args}-s ";;
+       --password) args="${args}-p ";;
+       # pass through anything else
+       *) [[ "${arg:0:1}" == "-" ]] || delim="\""
+           args="${args}${delim}${arg}${delim} ";;
+    esac
+done
+# reset the translated args
+eval set -- $args
+# now we can process with getopt
+while getopts ":hc:n:s:p:" opt; do
+    case $opt in
+        h)  usage ;;
+        c)  OCCI_CONFIG=$OPTARG ;;
+        n)  SD_HOSTNAME=$OPTARG ;;
+        s)  WIFI_SSID=$OPTARG ;;
+        p)  WIFI_PASSWORD=$OPTARG ;;
+        \?) usage ;;
+        :)
+        echo "option -$OPTARG requires an argument"
+        usage
+        ;;
+    esac
+done
+shift $((OPTIND -1))
+
+#echo "remaining args"
+#echo $*
+
+#echo "CONFIG = $CONFIG"
+#echo "SD_HOSTNAME = $SD_HOSTNAME"
+#echo "WIFI_SSID = $WIFI_SSID"
+#echo "WIFI_PASSWORD = $WIFI_PASSWORD"
 
 beginswith() { case $2 in $1*) true;; *) false;; esac; }
 endswith() { case $2 in *$1) true;; *) false;; esac; }
-
-if [ "$1" == "" ]; then
-  usage
-fi
-if [ "$1" == "--help" ]; then
-  usage
-fi
 
 image=$1
 
@@ -108,18 +151,30 @@ else
   sudo dd bs=1m if=$image of=/dev/r${disk}
 fi
 
-if [ -f "$occi" ]; then
-  # try to find the correct disk again
-  boot=$(df | grep /dev/${disk}s1 | sed 's,.*/Volumes,/Volumes,')
-  if [ "$boot" == "" ]; then
-    while [ "$boot" == "" ]; do
-      sleep 1
-      boot=$(df | grep /dev/${disk}s1 | sed 's,.*/Volumes,/Volumes,')
-    done
-  fi
+boot=$(df | grep /dev/${disk}s1 | sed 's,.*/Volumes,/Volumes,')
+if [ "$boot" == "" ]; then
+  while [ "$boot" == "" ]; do
+    sleep 1
+    boot=$(df | grep /dev/${disk}s1 | sed 's,.*/Volumes,/Volumes,')
+  done
+fi
 
-  echo "Copying $occi to ${boot}/occidentalis.txt ..."
-  cp "$occi"  "${boot}/occidentalis.txt"
+if [ -f "$OCCI_CONFIG" ]; then
+  echo "Copying $OCCI_CONFIG to ${boot}/occidentalis.txt ..."
+  cp "$OCCI_CONFIG"  "${boot}/occidentalis.txt"
+fi
+
+if [ ! -z $SD_HOSTNAME ]; then
+  echo "Set hostname = $SD_HOSTNAME"
+  sed -i -e "s/.*hostname.*=.*\$/hostname = $SD_HOSTNAME/" "${boot}/occidentalis.txt"
+fi
+if [ ! -z $WIFI_SSID ]; then
+  echo "Set wifi_ssid = $WIFI_SSID"
+  sed -i -e "s/.*wifi_ssid.*=.*\$/wifi_ssid = $WIFI_SSID/" "${boot}/occidentalis.txt"
+fi
+if [ ! -z $WIFI_PASSWORD ]; then
+  echo "Set wifi_password = $WIFI_PASSWORD"
+  sed -i -e "s/.*wifi_password.*=.*\$/wifi_password = $WIFI_PASSWORD/" "${boot}/occidentalis.txt"
 fi
 
 echo "Unmounting and ejecting ${disk} ..."
