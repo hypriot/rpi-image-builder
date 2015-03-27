@@ -7,7 +7,7 @@ DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
 
 SETTINGS_PROFILE="hypriot"
 
-SD_CARD_SIZE="1280"        # "1280" = 1.3 GB
+SD_CARD_SIZE="1024"        # "1280" = 1.3 GB
 BOOT_PARTITION_SIZE="64"   # "64" = 64 MB
 
 DEB_RELEASE="wheezy"       # jessie | wheezy | squeeze
@@ -17,7 +17,6 @@ APT_PACKAGES="ntpdate
               occi
               avahi-daemon
               usbutils
-              python
               bash-completion
               locales
               console-common

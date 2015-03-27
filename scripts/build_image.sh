@@ -224,9 +224,6 @@ sleep 3
 mkfs.vfat ${bootp}
 mkfs.ext4 ${rootp} -i 4096 # create 1 inode per 4kByte block (maximum ratio is 1 per 1kByte)
 
-echo "### Volume sizes:"
-df -h
-
 #######################################
 
 mkdir -p ${rootfs}
@@ -249,7 +246,14 @@ mount -o bind ${kernel_path} ${rootfs}/var/pkg/kernel
 mount -o bind ${docker_path} ${rootfs}/var/pkg/docker
 mount -o bind ${RPI_IMAGE_BUILDER_ROOT} ${rootfs}/var/pkg/gitdir
 
+echo "### Volume sizes:"
+df -h
+sfdisk -s
+
 cd $rootfs
+
+echo "#### INTERACTIVE SHELL "
+bash
 
 #######################################
 # Start installation of base system
@@ -380,6 +384,7 @@ echo 'Reconfigured timezone' >> /dev/kmsg
 
 
 # Expand filesystem, but only on real device, not in QEMU
+exit
 if [ ! -e /dev/sda ]; then
   echo 'Expanding rootfs ...' >> /dev/kmsg
   raspi-config --expand-rootfs
