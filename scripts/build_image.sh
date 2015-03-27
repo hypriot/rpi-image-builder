@@ -42,8 +42,6 @@ docker_path="$BUILD_INPUTS/docker"
 mkdir -p $docker_path
 
 # settings
-_BOOT_PARTITION_SIZE="64M"		# "64M" = 64 MB
-_DEB_RELEASE="wheezy"				# jessie | wheezy | squeeze
 _APT_SOURCE_DEBIAN="ftp://ftp.debian.org/debian"
 _APT_SOURCE_DEBIAN_CDN="http://http.debian.net/debian"
 _APT_SOURCE_RASPBIAN="http://mirrordirector.raspbian.org/raspbian/"
@@ -107,8 +105,8 @@ get_apt_source_mirror_url () {
 
 get_apt_sources_list () {
 echo "
-deb ${_APT_SOURCE} ${_DEB_RELEASE} main contrib non-free rpi
-#deb-src $(get_apt_source_mirror_url) ${_DEB_RELEASE} main contrib non-free rpi firmware
+deb ${_APT_SOURCE} ${DEB_RELEASE} main contrib non-free rpi
+#deb-src $(get_apt_source_mirror_url) ${DEB_RELEASE} main contrib non-free rpi firmware
 "
 }
 
@@ -177,7 +175,9 @@ iface eth0 inet6 auto
 # define destination folder where created image file will be stored
 mkdir -p ${BUILD_ENV}
 
-mount -t tmpfs -o size="2048m" tmpfs ${BUILD_ENV}
+TMPFS_SIZE=$(expr ${SD_CARD_SIZE} \* 3 / 2)
+
+mount -t tmpfs -o size="${TMPFS_SIZE}m" tmpfs ${BUILD_ENV}
 
 mount | grep tmpfs
 
@@ -189,16 +189,27 @@ bootfs="${rootfs}/boot"
 
 BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
-IMAGE_PATH=""
 IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img"
-dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1280
+
+BOOTFS_START=2048
+BOOTFS_SIZE=$(expr ${BOOT_PARTITION_SIZE} \* 2048)
+ROOTFS_START=$(expr ${BOOTFS_SIZE} + ${BOOTFS_START})
+ROOTFS_SIZE=$(expr ${SD_CARD_SIZE} \* 1000000 / 512 - ${ROOTFS_START})
+
+dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=${SD_CARD_SIZE}
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
 
 # Create partions
-sfdisk --force --quiet ${DEVICE} < $BUILD_SCRIPTS/files/sd_card_partition_layout
+sfdisk --force ${DEVICE} <<PARTITION
+unit: sectors
 
+/dev/loop0p1 : start= ${BOOTFS_START}, size= ${BOOTFS_SIZE}, Id= c
+/dev/loop0p2 : start= ${ROOTFS_START}, size= ${ROOTFS_SIZE}, Id=83
+/dev/loop0p3 : start= 0, size= 0, Id= 0
+/dev/loop0p4 : start= 0, size= 0, Id= 0
+PARTITION
 
 losetup -d $DEVICE
 DEVICE=`kpartx -va ${IMAGE_PATH} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
@@ -212,6 +223,9 @@ sleep 3
 # create file systems
 mkfs.vfat ${bootp}
 mkfs.ext4 ${rootp} -i 4096 # create 1 inode per 4kByte block (maximum ratio is 1 per 1kByte)
+
+echo "### Volume sizes:"
+df -h
 
 #######################################
 
@@ -239,17 +253,17 @@ cd $rootfs
 
 #######################################
 # Start installation of base system
-#debootstrap --arch armhf --variant=minbase --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url) # TODO: Research how to use in production
+#debootstrap --arch armhf --variant=minbase --no-check-gpg --foreign ${DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url) # TODO: Research how to use in production
 # setup env
 
 function unpack_debootstrap_tarball () {
   echo "### start unpacking debootstrap.tgz"
-  debootstrap --unpack-tarball /tmp/cache/debootstrap_rpi.tgz --arch armhf --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
+  debootstrap --unpack-tarball /tmp/cache/debootstrap_rpi.tgz --arch armhf --no-check-gpg --foreign ${DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
 }
 
 function pack_debootstrap_tarball () {
   echo "### start packing debootstrap.tgz pack"
-  debootstrap --arch armhf --no-check-gpg --foreign ${_DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
+  debootstrap --arch armhf --no-check-gpg --foreign ${DEB_RELEASE} ${rootfs} $(get_apt_source_mirror_url)
   (cd $rootfs; tar czf - var/lib/apt var/cache/apt) > /tmp/cache/debootstrap_rpi.tgz
 }
 
@@ -396,6 +410,12 @@ apt-get update
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl
 
+# adding Debian Archive Automatic Signing Key (7.0/wheezy) <ftpmaster@debian.org> to apt-keyring
+gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
+gpg -a --export 8B48AD6246925553 | apt-key add -
+
+wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O - | apt-key add -
+
 # install occi
 echo 'deb http://apt.adafruit.com/raspbian/ wheezy main' >> etc/apt/sources.list
 wget -q https://apt.adafruit.com/apt.adafruit.com.gpg.key -O - | apt-key add -
@@ -412,19 +432,13 @@ kernel_commit: ${KERNEL_COMMIT}
 
 VERSION
 
-apt-get -y install ntpdate fake-hwclock occi avahi-daemon usbutils python bash-completion
+apt-get -y install ${APT_PACKAGES}
 
 # patch /usr/bin/occi to improve finding wlan interface
 sed -i s/\'ifconfig\',\ \'-s\'/\'ifconfig\',\ \'-a\'/ /usr/bin/occi
 
 # add docker bash completion
 curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
-
-# adding Debian Archive Automatic Signing Key (7.0/wheezy) <ftpmaster@debian.org> to apt-keyring
-gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
-gpg -a --export 8B48AD6246925553 | apt-key add -
-
-wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O - | apt-key add -
 
 curl -s -L --output /usr/bin/rpi-update https://raw.github.com/Hexxeh/rpi-update/master/rpi-update && chmod +x /usr/bin/rpi-update
 touch /boot/start.elf
@@ -433,19 +447,11 @@ SKIP_BACKUP=1 SKIP_KERNEL=1 /usr/bin/rpi-update
 echo 'Listing /lib/modules/'
 ls -al /lib/modules/
 
-apt-get -y install ${_APT_PACKAGES} # FIXME
-
 rm -f /etc/ssh/ssh_host_*
-
-
-apt-get -y install lua5.1 triggerhappy dmsetup parted
 
 wget -q http://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20150131-1_all.deb
 dpkg -i raspi-config_20150131-1_all.deb
 rm -f raspi-config_20150131-1_all.deb
-
-
-apt-get -y install rng-tools sudo htop
 
 echo "***** Installing HyprIoT kernel *****"
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
@@ -549,6 +555,8 @@ done
 # we want to unmap the loopback device with kpartx
 cd /
 
+echo "### Volume sizes before unmount"
+df -h
 
 echo "### Unmounting"
 umount -l ${rootfs}/dev/pts || true
@@ -565,6 +573,8 @@ sync
 sleep 5
 
 echo "### remove dev mapper devices for image partitions"
+kpartx -vds ${IMAGE_PATH} || true
+sleep 5
 kpartx -vds ${IMAGE_PATH}
 
 echo "### compress $IMAGE_PATH to ${IMAGE_PATH}.zip"
