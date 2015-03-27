@@ -39,3 +39,10 @@ publish:
 
 cache:
   - /tmp/cache
+
+notify:
+  slack:
+    webhook_url: $$SLACK_WEBHOOK_URL
+    on_started: false
+    on_success: true
+    on_failure: true
