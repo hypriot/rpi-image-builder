@@ -1,12 +1,12 @@
 #!/bin/bash
 set -ex
 
-# read configuration
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-. ${DIR}/config.sh
-
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
 BUILD_INPUTS=${BUILD_INPUTS:="/$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
+
+# read configuration
+SETTINGS_PROFILE="hypriot"
+. "$RPI_IMAGE_BUILDER_ROOT/settings/${SETTINGS_PROFILE}"
 
 # provide the name of the packages that should be fetched here
 KERNEL_PACKAGES="kernel/${KERNEL_DATETIME}/libraspberrypi-bin_${KERNEL_DATETIME}_armhf.deb \
