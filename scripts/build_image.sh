@@ -64,8 +64,6 @@ fi
 
 _MODULES=""
 
-_APT_PACKAGES="locales console-common openssh-server ntp less vim"
-
 _USER_NAME=""
 _USER_PASS=""
 
@@ -124,14 +122,19 @@ set_network_config () {
 	_NET_CONFIG_FILE="etc/network/interfaces"
 
 	case "$1" in
-		"dhcp")
-			echo "
+    "dhcp")
+      echo "
 auto lo
 iface lo inet loopback
 
-auto eth0
+allow-hotplug eth0
 iface eth0 inet dhcp
 iface eth0 inet6 auto
+
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
 " > ${_NET_CONFIG_FILE}
 				;;
 
@@ -298,6 +301,16 @@ get_apt_sources_list > etc/apt/sources.list
 # boot/cmdline.txt
 echo "+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 cgroup-enable=memory swapaccount=1 elevator=deadline rootwait console=ttyAMA0,115200 kgdboc=ttyAMA0,115200" > boot/cmdline.txt
 
+# boot/occidentalis.txt (occi)
+echo "
+# hostname for your Hypriot Raspberry Pi:
+hostname=${_HOSTNAME}
+
+# basic wireless networking options:
+# wifi_ssid=your-ssid
+# wifi_password=your-presharedkey
+" > boot/occidentalis.txt
+
 # etc/fstab
 echo "${_FSTAB}" > etc/fstab
 
@@ -423,6 +436,12 @@ gpg -a --export 8B48AD6246925553 | apt-key add -
 
 wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O - | apt-key add -
 
+# install occi
+echo 'deb http://apt.adafruit.com/raspbian/ wheezy main' >> etc/apt/sources.list
+wget -q https://apt.adafruit.com/apt.adafruit.com.gpg.key -O - | apt-key add -
+
+apt-get update
+
 curl -s -L --output /usr/bin/rpi-update https://raw.github.com/Hexxeh/rpi-update/master/rpi-update && chmod +x /usr/bin/rpi-update
 touch /boot/start.elf
 mkdir -p /lib/modules
@@ -431,6 +450,9 @@ echo 'Listing /lib/modules/'
 ls -al /lib/modules/
 
 apt-get -y install ${_APT_PACKAGES} # FIXME
+
+# patch /usr/bin/occi to improve finding wlan interface
+sed -i s/\'ifconfig\',\ \'-s\'/\'ifconfig\',\ \'-a\'/ /usr/bin/occi
 
 rm -f /etc/ssh/ssh_host_*
 
@@ -565,6 +587,8 @@ sync
 sleep 5
 
 echo "### remove dev mapper devices for image partitions"
+kpartx -vds ${IMAGE_PATH} || true
+sleep 5
 kpartx -vds ${IMAGE_PATH}
 
 echo "### compress $IMAGE_PATH to ${IMAGE_PATH}.zip"
