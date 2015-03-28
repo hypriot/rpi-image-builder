@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe command('uname -r') do
-  its(:stdout) { should match /3.18.9(-v7)?+/ }
+  its(:stdout) { should match /3.18.10(-v7)?+/ }
   its(:exit_status) { should eq 0 }
 end
 
