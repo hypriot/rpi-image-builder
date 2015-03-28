@@ -22,8 +22,8 @@ BUILD_RESULTS=${BUILD_RESULTS:="$RPI_IMAGE_BUILDER_ROOT/build_results"}
 BUILD_INPUTS=${BUILD_INPUTS:="$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
 
 # read configuration
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-. ${DIR}/config.sh
+SETTINGS_PROFILE="hypriot"
+. "$RPI_IMAGE_BUILDER_ROOT/settings/${SETTINGS_PROFILE}"
 
 ZIP_IMAGE_PATH="$(ls -1t ${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-*.img.zip | head -1)"
 IMAGE="$(basename -s .zip $ZIP_IMAGE_PATH)"

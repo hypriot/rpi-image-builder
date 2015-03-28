@@ -18,11 +18,12 @@ trap 'handle_error $LINENO $?' ERR
 # set up some variables for the script
 export LC_ALL="C"
 
-# read configuration
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-. ${DIR}/config.sh
-
 RPI_IMAGE_BUILDER_ROOT=${RPI_IMAGE_BUILDER_ROOT:="/vagrant"}
+
+# read configuration
+SETTINGS_PROFILE="hypriot"
+. "$RPI_IMAGE_BUILDER_ROOT/settings/${SETTINGS_PROFILE}"
+
 BUILD_ENV=${BUILD_ENV:="/build_env"}
 BUILD_RESULTS=${BUILD_RESULTS:="$RPI_IMAGE_BUILDER_ROOT/build_results"}
 BUILD_INPUTS=${BUILD_INPUTS:="$RPI_IMAGE_BUILDER_ROOT/build_inputs"}
@@ -42,8 +43,6 @@ docker_path="$BUILD_INPUTS/docker"
 mkdir -p $docker_path
 
 # settings
-_BOOT_PARTITION_SIZE="64M"		# "64M" = 64 MB
-_DEB_RELEASE="wheezy"				# jessie | wheezy | squeeze
 _APT_SOURCE_DEBIAN="ftp://ftp.debian.org/debian"
 _APT_SOURCE_DEBIAN_CDN="http://http.debian.net/debian"
 _APT_SOURCE_RASPBIAN="http://mirrordirector.raspbian.org/raspbian/"
@@ -172,7 +171,9 @@ iface eth0 inet6 auto
 # define destination folder where created image file will be stored
 mkdir -p ${BUILD_ENV}
 
-mount -t tmpfs -o size="2048m" tmpfs ${BUILD_ENV}
+TMPFS_SIZE=$(expr ${SD_CARD_SIZE} \* 3 / 2)
+
+mount -t tmpfs -o size="${TMPFS_SIZE}m" tmpfs ${BUILD_ENV}
 
 mount | grep tmpfs
 
@@ -186,14 +187,34 @@ BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 IMAGE_PATH=""
 IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img"
-dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=1280
+
+BOOTFS_START=2048
+BOOTFS_SIZE=$(expr ${BOOT_PARTITION_SIZE} \* 2048)
+ROOTFS_START=$(expr ${BOOTFS_SIZE} + ${BOOTFS_START})
+SD_MINUS_DD=$(expr ${SD_CARD_SIZE} - 256)  # old config: 1280 - 256 = 1024 for rootfs
+ROOTFS_SIZE=$(expr ${SD_MINUS_DD} \* 1000000 / 512 - ${ROOTFS_START})
+
+dd if=/dev/zero of=${IMAGE_PATH} bs=1MB count=${SD_CARD_SIZE}
+
 DEVICE=$(losetup -f --show ${IMAGE_PATH})
 
 echo "Image ${IMAGE_PATH} created and mounted as ${DEVICE}."
 
 # Create partions
-sfdisk --force --quiet ${DEVICE} < $BUILD_SCRIPTS/files/sd_card_partition_layout
+sfdisk --force ${DEVICE} <<PARTITION
+unit: sectors
 
+/dev/loop0p1 : start= ${BOOTFS_START}, size= ${BOOTFS_SIZE}, Id= c
+/dev/loop0p2 : start= ${ROOTFS_START}, size= ${ROOTFS_SIZE}, Id=83
+/dev/loop0p3 : start= 0, size= 0, Id= 0
+/dev/loop0p4 : start= 0, size= 0, Id= 0
+PARTITION
+
+echo "INTERACTIVE"
+echo "/dev/loop0p1 : start= ${BOOTFS_START}, size= ${BOOTFS_SIZE}, Id= c
+/dev/loop0p2 : start= ${ROOTFS_START}, size= ${ROOTFS_SIZE}, Id=83
+"
+bash
 
 losetup -d $DEVICE
 DEVICE=`kpartx -va ${IMAGE_PATH} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
