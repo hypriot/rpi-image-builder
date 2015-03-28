@@ -213,12 +213,6 @@ unit: sectors
 /dev/loop0p4 : start= 0, size= 0, Id= 0
 PARTITION
 
-echo "INTERACTIVE"
-echo "/dev/loop0p1 : start= ${BOOTFS_START}, size= ${BOOTFS_SIZE}, Id= c
-/dev/loop0p2 : start= ${ROOTFS_START}, size= ${ROOTFS_SIZE}, Id=83
-"
-bash
-
 losetup -d $DEVICE
 DEVICE=`kpartx -va ${IMAGE_PATH} | sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
 bootp="/dev/mapper/${DEVICE}p1"
@@ -467,7 +461,6 @@ rm -f raspi-config_20131216-1_all.deb
 
 apt-get -y install rng-tools
 apt-get -y install sudo
-apt-get -y install htop
 
 echo "***** Installing HyprIoT kernel *****"
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
