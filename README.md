@@ -25,6 +25,33 @@ The docker deb package is downloaded from S3 bucket `s3://buildserver-production
 
 * `docker-hypriot_1.5.0-<buildnumber>_armhf.deb`
 
+### config.sh
+
+The file `scripts/config.sh` contains the major configuration of the SD image.
+
+```bash
+#!/bin/bash
+
+# configuration for all build scripts
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150321-232854"}
+KERNEL_VERSION=${KERNEL_VERSION:="3.18.9"}
+DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
+
+SETTINGS_PROFILE="hypriot"
+
+SD_CARD_SIZE="1280"        # "1280" = 1.3 GB
+BOOT_PARTITION_SIZE="64"   # "64" = 64 MB
+
+DEB_RELEASE="wheezy"       # jessie | wheezy | squeeze
+
+APT_PACKAGES="ntpdate
+              fake-hwclock
+              occi
+              avahi-daemon
+              ...
+              vim"
+```
+
 ## Build outputs
 
 The final SD card image will be uploaded to S3 to `s3://buildserver-production/images/hypriot-date-time.img`.
@@ -54,6 +81,23 @@ Afterwards unmount everything with
 ```
 
 Your changes are written into the SD card image file.
+
+### Test the latest SD build
+
+```bash
+vagrant ssh
+sudo su
+/vagrant/scripts/test_image.sh
+```
+
+### Rebuild with Vagrant
+
+To rebuild another SD image just reboot the VM, so that any mountpoints and tmp file system removed.
+
+```bash
+vagrant reload
+vagrant ssh -c "sudo /vagrant/scripts/build_image.sh"
+```
 
 ## Build with Drone
 

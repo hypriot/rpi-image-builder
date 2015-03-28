@@ -2,6 +2,8 @@
 *.zip
 *.deb
 *.img
+.aws/
+kernel-qemu
 
 # ignore vagrant box specific configuration
 .vagrant/

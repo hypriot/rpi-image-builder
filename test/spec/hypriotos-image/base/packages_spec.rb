@@ -13,3 +13,19 @@ end
 describe package('htop') do
   it { should be_installed }
 end
+
+describe package('fake-hwclock') do
+  it { should be_installed }
+end
+
+describe package('occi') do
+  it { should be_installed }
+end
+
+describe package('usbutils') do
+  it { should be_installed }
+end
+
+describe package('python') do
+  it { should be_installed }
+end
