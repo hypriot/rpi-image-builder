@@ -454,9 +454,9 @@ rm -f /etc/ssh/ssh_host_*
 apt-get -y install lua5.1 triggerhappy
 apt-get -y install dmsetup parted
 
-wget -q http://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20131216-1_all.deb
-dpkg -i raspi-config_20131216-1_all.deb
-rm -f raspi-config_20131216-1_all.deb
+wget -q http://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20150131-1_all.deb
+dpkg -i raspi-config_20150131-1_all.deb
+rm -f raspi-config_20150131-1_all.deb
 
 
 apt-get -y install rng-tools
