@@ -13,11 +13,11 @@ describe file('/lib/modules/3.18.7-v7+') do
   it { should_not be_directory }
 end
 
-describe file('/lib/modules/3.18.9+') do
+describe file('/lib/modules/3.18.10+') do
   it { should_not be_directory }
 end
 
-describe file('/lib/modules/3.18.9-v7+') do
+describe file('/lib/modules/3.18.10-v7+') do
   it { should_not be_directory }
 end
 
