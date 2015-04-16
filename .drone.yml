@@ -24,7 +24,7 @@ script:
   - service binfmt-support start
   - scripts/fetch_build_inputs.sh
   - scripts/build_image.sh
-  - scripts/test_image.sh
+#  - scripts/test_image.sh
 
 publish:
   s3:

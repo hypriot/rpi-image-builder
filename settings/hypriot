@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # configuration for all build scripts
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150329-125633"}
-KERNEL_VERSION=${KERNEL_VERSION:="3.18.10"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150412-160709"}
+KERNEL_VERSION=${KERNEL_VERSION:="3.18.11"}
 
-DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.5.0-7_armhf.deb"}
+DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.6.0-1_armhf.deb"}
 
 SD_CARD_SIZE="1280"        # "1280" = 1.3 GB
 BOOT_PARTITION_SIZE="64"   # "64" = 64 MB
