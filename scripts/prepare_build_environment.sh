@@ -34,6 +34,11 @@ sudo update-alternatives --set apt-get /usr/bin/apt-fast
 }
 
 function install_prerequisites () {
+# this fixed the "update-binfmts: warning: Couldn't load the binfmt_misc module." error
+# I do not understand why it is needed now
+# more documenation about this can be found here https://www.kernel.org/doc/Documentation/binfmt_misc.txt
+mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+
 # install packages needed for building the sd card image
 sudo apt-get install -y python-pip build-essential libncurses5-dev tree binfmt-support qemu qemu-user-static debootstrap kpartx lvm2 dosfstools apt-cacher-ng pigz
 
