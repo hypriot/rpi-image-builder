@@ -224,7 +224,7 @@ sleep 3
 
 # create file systems
 mkfs.vfat ${bootp}
-mkfs.ext4 ${rootp} -i 4096 # create 1 inode per 4kByte block (maximum ratio is 1 per 1kByte)
+mkfs.ext4 ${rootp} -L root -i 4096 # create 1 inode per 4kByte block (maximum ratio is 1 per 1kByte)
 
 #######################################
 
