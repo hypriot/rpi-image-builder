@@ -379,7 +379,7 @@ echo 'Reconfigured timezone' >> /dev/kmsg
 
 
 # Expand filesystem, but only on real device, not in QEMU
-if [ ! -e /dev/sda ]; then
+if [ ! -e /dev/disk/by-label/root ]; then
   echo 'Expanding rootfs ...' >> /dev/kmsg
   raspi-config --expand-rootfs
   echo 'Expand rootfs done' >> /dev/kmsg
