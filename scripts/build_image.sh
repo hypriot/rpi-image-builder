@@ -457,7 +457,10 @@ apt-get -y install dmsetup parted
 wget -q http://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20150131-1_all.deb
 dpkg -i raspi-config_20150131-1_all.deb
 rm -f raspi-config_20150131-1_all.deb
-
+#+++TODO: remove fix
+#Fix for Jessie resize2fs
+cp /var/pkg/gitdir/scripts/files/raspi-config /usr/bin/raspi-config
+#---TODO
 
 apt-get -y install rng-tools
 apt-get -y install sudo
