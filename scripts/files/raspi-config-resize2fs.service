@@ -1,0 +1,13 @@
+[Unit]
+Description=Resize filesystem to maximum of SD card
+DefaultDependencies=no
+Before=sysinit.target
+After=udev.service mountkernfs.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/resize2fs /dev/disk/by-label/root
+
+[Install]
+WantedBy=multi-user.target
