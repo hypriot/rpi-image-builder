@@ -384,6 +384,9 @@ if [ ! -e /dev/sda ]; then
   raspi-config --expand-rootfs
   echo 'Expand rootfs done' >> /dev/kmsg
 
+  sudo systemctl enable raspi-config-resize2fs.service
+  sudo systemctl enable docker.service
+
   sleep 5
   reboot
 fi
@@ -459,7 +462,8 @@ dpkg -i raspi-config_20150131-1_all.deb
 rm -f raspi-config_20150131-1_all.deb
 #+++TODO: remove fix
 #Fix for Jessie resize2fs
-cp /var/pkg/gitdir/scripts/files/raspi-config /usr/bin/raspi-config
+cp /var/pkg/gitdir/scripts/files/raspi-config /usr/bin/
+cp /var/pkg/gitdir/scripts/files/raspi-config-resize2fs.service /lib/systemd/system/
 #---TODO
 
 apt-get -y install rng-tools
