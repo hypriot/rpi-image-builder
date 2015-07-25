@@ -381,14 +381,15 @@ echo 'Reconfigured timezone' >> /dev/kmsg
 # Expand filesystem, but only on real device, not in QEMU
 if [ ! -e /dev/sda ]; then
   echo 'Expanding rootfs ...' >> /dev/kmsg
-  raspi-config --expand-rootfs
+  echo 'DUMMY! NOTHING WILL BE CHANGED BY THIS SCRIPT.'
+  # raspi-config --expand-rootfs
   echo 'Expand rootfs done' >> /dev/kmsg
 
-  sudo systemctl enable raspi-config-resize2fs.service
-  sudo systemctl enable docker.service
+  # sudo systemctl enable raspi-config-resize2fs.service
+  # sudo systemctl enable docker.service
 
-  sleep 5
-  reboot
+  # sleep 5
+  # reboot
 fi
 
 " > root/firstboot.sh
