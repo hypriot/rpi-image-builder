@@ -47,4 +47,4 @@ w
 EOF
 
 partprobe
-/sbin/resize2fs
+/sbin/resize2fs /dev/disk/by-label/root
