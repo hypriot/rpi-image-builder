@@ -494,6 +494,8 @@ cp /var/pkg/gitdir/scripts/files/bash_prompt/bash_prompt /home/pi/.bash_prompt
 chown -R pi:pi /home/pi
 echo "***** HyprIoT bash prompt installed *****"
 
+sed -i -e 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
 echo \"${_USER_NAME}:${_USER_PASS}\" | chpasswd
 sed -i -e 's/KERNEL\!=\"eth\*|/KERNEL\!=\"/' /lib/udev/rules.d/75-persistent-net-generator.rules
 rm -f /etc/udev/rules.d/70-persistent-net.rules
