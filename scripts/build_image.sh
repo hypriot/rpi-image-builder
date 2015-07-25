@@ -331,7 +331,7 @@ echo "#!/bin/bash
 # It is ran as root.
 
 # resize root partion to possible maximum
-/usr/bin/local/resize_root_partition
+/usr/local/bin/resize_root_partition
 
 # Get current date from debian time server
 ntpdate 0.debian.pool.ntp.org
