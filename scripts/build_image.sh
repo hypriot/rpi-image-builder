@@ -416,10 +416,6 @@ VERSION
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl bash-completion # TODO FIXME
 
-# add docker bash completion
-curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
-chmod 644 /etc/bash_completion.d/docker
-
 # adding Debian Archive Automatic Signing Key (7.0/wheezy) <ftpmaster@debian.org> to apt-keyring
 gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
 gpg -a --export 8B48AD6246925553 | apt-key add -
