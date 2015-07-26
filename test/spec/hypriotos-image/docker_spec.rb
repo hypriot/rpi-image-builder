@@ -85,3 +85,8 @@ describe service('docker') do
   it { should be_enabled }
   it { should be_running }
 end
+
+describe command('grep docker /var/log/syslog') do
+  its(:stdout) { should match /Daemon has completed initialization/ }
+  its(:exit_status) { should eq 0 }
+end
