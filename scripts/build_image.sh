@@ -330,13 +330,14 @@ echo "#!/bin/bash
 # This script will run the first time the raspberry pi boots.
 # It is ran as root.
 
+echo 'Starting firstboot.sh' >> /dev/kmsg
+
 # resize root partion to possible maximum
+echo 'Resizing root partition' >> /dev/kmsg
 /usr/local/bin/resize_root_partition
 
 # Get current date from debian time server
 ntpdate 0.debian.pool.ntp.org
-
-echo 'Starting firstboot.sh' >> /dev/kmsg
 
 echo 'Reconfiguring openssh-server' >> /dev/kmsg
 echo '  Collecting entropy ...' >> /dev/kmsg
@@ -352,7 +353,6 @@ rm -f /etc/ssh/ssh_host_*
 echo '  Generating new SSH host keys ...' >> /dev/kmsg
 dpkg-reconfigure openssh-server
 echo '  Reconfigured openssh-server' >> /dev/kmsg
-
 
 # Set locale
 export LANGUAGE=${_LOCALES}.${_ENCODING}
@@ -373,12 +373,15 @@ EOF
 
 echo 'Reconfigured locale' >> /dev/kmsg
 
-
 # Set timezone
 echo '${_TIMEZONE}' > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 
 echo 'Reconfigured timezone' >> /dev/kmsg
+
+echo 'Enabling and starting docker service' >> /dev/kmsg
+systemctl enable docker.service
+systemctl start docker.service
 
 " > root/firstboot.sh
 chmod 755 root/firstboot.sh
@@ -442,21 +445,8 @@ sed -i s/\'ifconfig\',\ \'-s\'/\'ifconfig\',\ \'-a\'/ /usr/bin/occi
 
 rm -f /etc/ssh/ssh_host_*
 
-
 apt-get -y install lua5.1 triggerhappy
 apt-get -y install dmsetup parted
-
-wget -q http://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20150131-1_all.deb
-dpkg -i raspi-config_20150131-1_all.deb
-rm -f raspi-config_20150131-1_all.deb
-#+++TODO: remove fix
-#Fix for Jessie resize2fs
-cp /var/pkg/gitdir/scripts/files/raspi-config /usr/bin/
-cp /var/pkg/gitdir/scripts/files/raspi-config-resize2fs.service /lib/systemd/system/
-cp /var/pkg/gitdir/scripts/files/resize_root_partition /usr/local/bin/resize_root_partition
-chmod +x /usr/local/bin/resize_root_partition
-#---TODO
-
 apt-get -y install rng-tools
 apt-get -y install sudo
 
