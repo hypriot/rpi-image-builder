@@ -224,7 +224,7 @@ sleep 3
 
 # create file systems
 mkfs.vfat ${bootp}
-mkfs.ext4 ${rootp} -i 4096 # create 1 inode per 4kByte block (maximum ratio is 1 per 1kByte)
+mkfs.ext4 ${rootp} -L root -i 4096 # create 1 inode per 4kByte block (maximum ratio is 1 per 1kByte)
 
 #######################################
 
@@ -330,10 +330,14 @@ echo "#!/bin/bash
 # This script will run the first time the raspberry pi boots.
 # It is ran as root.
 
+echo 'Starting firstboot.sh' >> /dev/kmsg
+
+# resize root partion to possible maximum
+echo 'Resizing root partition' >> /dev/kmsg
+/usr/local/bin/resize_root_partition
+
 # Get current date from debian time server
 ntpdate 0.debian.pool.ntp.org
-
-echo 'Starting firstboot.sh' >> /dev/kmsg
 
 echo 'Reconfiguring openssh-server' >> /dev/kmsg
 echo '  Collecting entropy ...' >> /dev/kmsg
@@ -349,7 +353,6 @@ rm -f /etc/ssh/ssh_host_*
 echo '  Generating new SSH host keys ...' >> /dev/kmsg
 dpkg-reconfigure openssh-server
 echo '  Reconfigured openssh-server' >> /dev/kmsg
-
 
 # Set locale
 export LANGUAGE=${_LOCALES}.${_ENCODING}
@@ -370,23 +373,15 @@ EOF
 
 echo 'Reconfigured locale' >> /dev/kmsg
 
-
 # Set timezone
 echo '${_TIMEZONE}' > /etc/timezone
 dpkg-reconfigure -f noninteractive tzdata
 
 echo 'Reconfigured timezone' >> /dev/kmsg
 
-
-# Expand filesystem, but only on real device, not in QEMU
-if [ ! -e /dev/sda ]; then
-  echo 'Expanding rootfs ...' >> /dev/kmsg
-  raspi-config --expand-rootfs
-  echo 'Expand rootfs done' >> /dev/kmsg
-
-  sleep 5
-  reboot
-fi
+echo 'Enabling and starting docker service' >> /dev/kmsg
+systemctl enable docker.service
+systemctl start docker.service
 
 " > root/firstboot.sh
 chmod 755 root/firstboot.sh
@@ -421,9 +416,6 @@ VERSION
 
 apt-get -y install aptitude gpgv git-core binutils ca-certificates wget curl bash-completion # TODO FIXME
 
-# add docker bash completion
-curl -o /etc/bash_completion.d/docker https://raw.githubusercontent.com/docker/docker/master/contrib/completion/bash/docker
-
 # adding Debian Archive Automatic Signing Key (7.0/wheezy) <ftpmaster@debian.org> to apt-keyring
 gpg --keyserver pgpkeys.mit.edu --recv-key 8B48AD6246925553
 gpg -a --export 8B48AD6246925553 | apt-key add -
@@ -450,15 +442,8 @@ sed -i s/\'ifconfig\',\ \'-s\'/\'ifconfig\',\ \'-a\'/ /usr/bin/occi
 
 rm -f /etc/ssh/ssh_host_*
 
-
 apt-get -y install lua5.1 triggerhappy
 apt-get -y install dmsetup parted
-
-wget -q http://archive.raspberrypi.org/debian/pool/main/r/raspi-config/raspi-config_20150131-1_all.deb
-dpkg -i raspi-config_20150131-1_all.deb
-rm -f raspi-config_20150131-1_all.deb
-
-
 apt-get -y install rng-tools
 apt-get -y install sudo
 
@@ -495,6 +480,13 @@ cp /var/pkg/gitdir/scripts/files/bash_prompt/bashrc /home/pi/.bashrc
 cp /var/pkg/gitdir/scripts/files/bash_prompt/bash_prompt /home/pi/.bash_prompt
 chown -R pi:pi /home/pi
 echo "***** HyprIoT bash prompt installed *****"
+
+echo "***** Installing resize_root_partition script *****"
+cp /var/pkg/gitdir/scripts/files/resize_root_partition /usr/local/bin/resize_root_partition
+chmod +x /usr/local/bin/resize_root_partition
+
+echo "***** Enabling password login for root *****"
+sed -i -e 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 echo \"${_USER_NAME}:${_USER_PASS}\" | chpasswd
 sed -i -e 's/KERNEL\!=\"eth\*|/KERNEL\!=\"/' /lib/udev/rules.d/75-persistent-net-generator.rules
