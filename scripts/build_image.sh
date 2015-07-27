@@ -481,6 +481,11 @@ cp /var/pkg/gitdir/scripts/files/bash_prompt/bash_prompt /home/pi/.bash_prompt
 chown -R pi:pi /home/pi
 echo "***** HyprIoT bash prompt installed *****"
 
+echo "***** Installing resize_root_partition script *****"
+cp /var/pkg/gitdir/scripts/files/resize_root_partition /usr/local/bin/resize_root_partition
+chmod +x /usr/local/bin/resize_root_partition
+
+echo "***** Enabling password login for root *****"
 sed -i -e 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 echo \"${_USER_NAME}:${_USER_PASS}\" | chpasswd
