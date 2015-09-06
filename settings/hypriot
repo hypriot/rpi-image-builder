@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # configuration for all build scripts
-KERNEL_DATETIME=${KERNEL_DATETIME:="20150906-092404"}
+KERNEL_DATETIME=${KERNEL_DATETIME:="20150906-100606"}
 KERNEL_VERSION=${KERNEL_VERSION:="4.1.6"}
 
 DOCKER_DEB=${DOCKER_DEB:="docker-hypriot_1.8.1-1_armhf.deb"}
