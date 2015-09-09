@@ -1,3 +1,5 @@
+Specinfra::Runner.run_command('modprobe configs')
+
 describe command('zcat /proc/config.gz') do
   its(:stdout) { should match /CONFIG_KPROBES=y/ }
   its(:stdout) { should match /CONFIG_UPROBES=y/ }

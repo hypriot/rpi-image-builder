@@ -16,7 +16,6 @@ KERNEL_PACKAGES="kernel/${KERNEL_DATETIME}/libraspberrypi-bin_${KERNEL_DATETIME}
                  kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb \
                  kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos+_${KERNEL_VERSION}-hypriotos+-1_armhf.deb \
                  kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos-v7+_${KERNEL_VERSION}-hypriotos-v7+-2_armhf.deb \
-                 kernel/${KERNEL_DATETIME}/kernel-qemu \
                  kernel/${KERNEL_DATETIME}/kernel-commit.txt"
 DOCKER_PACKAGES="docker/deb/${DOCKER_DEB}"
 PACKAGES="$KERNEL_PACKAGES $DOCKER_PACKAGES"
