@@ -55,7 +55,7 @@ end
 
 describe file('/etc/bash_completion.d/docker') do
   it { should be_file }
-  it { should be_mode 644 }
+  it { should be_mode 755 }
   it { should be_owned_by 'root' }
   it { should be_file }
 end
