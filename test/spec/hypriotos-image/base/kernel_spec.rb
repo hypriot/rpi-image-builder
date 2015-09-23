@@ -29,21 +29,29 @@ describe file('/lib/modules/4.1.6-v7+') do
   it { should_not be_directory }
 end
 
+describe file('/lib/modules/4.1.7+') do
+  it { should_not be_directory }
+end
+
+describe file('/lib/modules/4.1.7-v7+') do
+  it { should_not be_directory }
+end
+
 # with installed kernel headers
-describe file('/lib/modules/4.1.6-hypriotos+/build') do
+describe file('/lib/modules/4.1.8-hypriotos+/build') do
   it { should be_symlink }
-  it { should be_linked_to '/usr/src/linux-headers-4.1.6-hypriotos+' }
+  it { should be_linked_to '/usr/src/linux-headers-4.1.8-hypriotos+' }
 end
 
-describe file('/lib/modules/4.1.6-hypriotos-v7+/build') do
+describe file('/lib/modules/4.1.8-hypriotos-v7+/build') do
   it { should be_symlink }
-  it { should be_linked_to '/usr/src/linux-headers-4.1.6-hypriotos-v7+' }
+  it { should be_linked_to '/usr/src/linux-headers-4.1.8-hypriotos-v7+' }
 end
 
-describe file('/usr/src/linux-headers-4.1.6-hypriotos-v7+') do
+describe file('/usr/src/linux-headers-4.1.8-hypriotos-v7+') do
   it { should be_directory }
 end
 
-describe file('/usr/src/linux-headers-4.1.6-hypriotos+') do
+describe file('/usr/src/linux-headers-4.1.8-hypriotos+') do
   it { should be_directory }
 end
