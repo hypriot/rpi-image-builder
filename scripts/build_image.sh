@@ -426,6 +426,11 @@ wget -q http://archive.raspberrypi.org/debian/raspberrypi.gpg.key -O - | apt-key
 echo 'deb http://apt.adafruit.com/raspbian/ wheezy main' >> etc/apt/sources.list
 wget -q https://apt.adafruit.com/apt.adafruit.com.gpg.key -O - | apt-key add -
 
+echo "***** Installing HyprIoT source list *****"
+wget -q https://packagecloud.io/gpg.key -O - | apt-key add -
+echo 'deb https://packagecloud.io/Hypriot/Schatzkiste/debian/ wheezy main' > /etc/apt/sources.list.d/hypriot.list
+echo "***** HyprIoT source list installed *****"
+
 apt-get update
 
 curl -s -L --output /usr/bin/rpi-update https://raw.github.com/Hexxeh/rpi-update/master/rpi-update && chmod +x /usr/bin/rpi-update
