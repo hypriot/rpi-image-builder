@@ -447,6 +447,13 @@ apt-get -y install dmsetup parted
 apt-get -y install rng-tools
 apt-get -y install sudo
 
+echo "***** Installing HyprIoT source list *****"
+wget -q https://packagecloud.io/gpg.key -O - | apt-key add -
+echo 'deb https://packagecloud.io/Hypriot/Schatzkiste/debian/ wheezy main' > /etc/apt/sources.list.d/hypriot.list
+echo "***** HyprIoT source list installed *****"
+
+apt-get update
+
 echo "***** Installing HyprIoT kernel *****"
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/raspberrypi-bootloader_${KERNEL_DATETIME}_armhf.deb
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi0_${KERNEL_DATETIME}_armhf.deb
