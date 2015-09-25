@@ -471,6 +471,10 @@ echo "***** Installing HyprIoT docker *****"
 dpkg -i /var/pkg/docker/deb/${DOCKER_DEB}
 echo "***** HyprIoT docker installed *****"
 
+echo "***** Installing docker-compose *****"
+apt-get install -y docker-compose=${DOCKER_COMPOSE_VERSION}
+echo "***** HyprIoT docker-compose installed *****"
+
 echo "***** Installing HyprIoT user=pi *****"
 useradd -m pi --group docker --shell /bin/bash
 echo "pi:raspberry" | chpasswd
