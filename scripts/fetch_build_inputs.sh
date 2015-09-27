@@ -30,3 +30,5 @@ for pkg in $PACKAGES; do
     aws s3 --region eu-central-1 cp s3://buildserver-production/$pkg $BUILD_INPUTS/$pkg
   fi
 done
+
+aws s3 --region eu-central-1 cp s3://buildserver-production/arm-binaries/swarm/swarm.tar.gz $BUILD_INPUTS/docker/swarm.tar.gz
