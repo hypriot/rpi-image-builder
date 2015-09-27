@@ -31,4 +31,4 @@ for pkg in $PACKAGES; do
   fi
 done
 
-aws s3 --region eu-central-1 cp s3://buildserver-production/arm-binaries/swarm/swarm.tar.gz $BUILD_INPUTS/docker/swarm.tar.gz
+aws s3 --region eu-central-1 cp s3://buildserver-production/5S3_PREFIX/swarm-201509262210-0.4.0.tar $BUILD_INPUTS/docker/swarm.tar.gz
