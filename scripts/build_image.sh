@@ -384,7 +384,7 @@ systemctl enable docker.service
 systemctl start docker.service
 
 echo 'Import Docker Swarm image'
-docker load /var/hypriot/swarm.tar.gz
+docker load < /var/hypriot/swarm.tar.gz
 
 " > root/firstboot.sh
 chmod 755 root/firstboot.sh
