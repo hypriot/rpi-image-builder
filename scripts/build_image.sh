@@ -383,6 +383,12 @@ echo 'Enabling and starting docker service' >> /dev/kmsg
 systemctl enable docker.service
 systemctl start docker.service
 
+echo 'Import Docker Swarm image' >> /dev/kmsg
+docker load < /var/hypriot/swarm.tar.gz
+if (($? == 0)); then
+  rm -f /var/hypriot/swarm.tar.gz
+fi
+
 " > root/firstboot.sh
 chmod 755 root/firstboot.sh
 
@@ -474,6 +480,11 @@ echo "***** HyprIoT docker installed *****"
 echo "***** Installing docker-compose *****"
 apt-get install -y docker-compose=${DOCKER_COMPOSE_VERSION}
 echo "***** HyprIoT docker-compose installed *****"
+
+echo "***** Copying Docker Swarm image *****"
+mkdir -p /var/hypriot
+cp /var/pkg/docker/swarm.tar.gz /var/hypriot
+echo "***** Copying Docker Swarm finished *****"
 
 echo "***** Installing HyprIoT user=pi *****"
 useradd -m pi --group docker --shell /bin/bash
