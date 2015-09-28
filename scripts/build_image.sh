@@ -607,6 +607,9 @@ echo "### copy $IMAGE_PATH to $BUILD_RESULTS directory."
 mkdir -p $BUILD_RESULTS
 cp $IMAGE_PATH $BUILD_RESULTS/
 
+echo "### create sha256 checksum"
+cd $BUILD_RESULTS && shasum -a 256 ${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img.zip > ${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img.zip.sha256
+
 echo "### Created image ${IMAGE_PATH}."
 
 exit ${SUCCESS}
