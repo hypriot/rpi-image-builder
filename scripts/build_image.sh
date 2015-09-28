@@ -383,8 +383,11 @@ echo 'Enabling and starting docker service' >> /dev/kmsg
 systemctl enable docker.service
 systemctl start docker.service
 
-echo 'Import Docker Swarm image'
+echo 'Import Docker Swarm image' >> /dev/kmsg
 docker load < /var/hypriot/swarm.tar.gz
+if (($? == 0)); then
+  rm -f /var/hypriot/swarm.tar.gz
+fi
 
 " > root/firstboot.sh
 chmod 755 root/firstboot.sh
