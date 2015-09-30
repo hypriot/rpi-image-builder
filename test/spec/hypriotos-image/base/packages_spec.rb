@@ -25,3 +25,11 @@ end
 describe package('usbutils') do
   it { should be_installed }
 end
+
+describe package('firmware-ralink') do
+  it { should be_installed }
+end
+
+describe package('firmware-realtek') do
+  it { should be_installed }
+end
