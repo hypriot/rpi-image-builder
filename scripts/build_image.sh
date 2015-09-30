@@ -51,6 +51,7 @@ _USE_CACHE="yes"
 _FSTAB="
 proc			/proc	proc	defaults	0	0
 /dev/mmcblk0p1	/boot	vfat	defaults	0	0
+/dev/mmcblk0p2	/	  	ext4	defaults,noatime       0       1
 "
 
 _HOSTNAME=""
