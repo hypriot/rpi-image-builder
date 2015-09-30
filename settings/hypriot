@@ -13,7 +13,8 @@ BOOT_PARTITION_SIZE="64"   # "64" = 64 MB
 _DEB_RELEASE="jessie"					# stable | testing | unstable | jessie | wheezy | squeeze, ...
 _APT_SOURCE="${_APT_SOURCE_RASPBIAN}"
 
-_APT_PACKAGES="locales console-common openssh-server ntp less vim ntpdate fake-hwclock occi avahi-daemon usbutils htop apt-transport-https"
+_APT_PACKAGES="locales console-common openssh-server ntp less vim ntpdate fake-hwclock occi avahi-daemon usbutils htop apt-transport-https
+               firmware-atheros firmware-brcm80211 firmware-libertas firmware-ralink firmware-realtek"
 
 _HOSTNAME="black-pearl"
 _NET_CONFIG="dhcp"
