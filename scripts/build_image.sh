@@ -490,9 +490,9 @@ echo "***** Installing docker-compose *****"
 apt-get install -y docker-compose=${DOCKER_COMPOSE_VERSION}
 echo "***** HyprIoT docker-compose installed *****"
 
-echo "***** Installing docker-machine *****"
-apt-get install -y docker-machine=${DOCKER_MACHINE_VERSION}
-echo "***** HyprIoT docker-machine installed *****"
+#echo "***** Installing docker-machine *****"
+#apt-get install -y docker-machine=${DOCKER_MACHINE_VERSION}
+#echo "***** HyprIoT docker-machine installed *****"
 
 echo "***** Copying Docker Swarm image *****"
 mkdir -p /var/hypriot
