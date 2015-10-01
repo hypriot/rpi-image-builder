@@ -356,6 +356,9 @@ dpkg-reconfigure openssh-server
 echo '  Reconfigured openssh-server' >> /dev/kmsg
 
 # Set locale
+locale-gen ${_LOCALES}.${_ENCODING}
+update-locale LANG=${_LOCALES}.${_ENCODING}
+
 export LANGUAGE=${_LOCALES}.${_ENCODING}
 export LANG=${_LOCALES}.${_ENCODING}
 export LC_ALL=${_LOCALES}.${_ENCODING}
