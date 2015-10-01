@@ -479,7 +479,7 @@ echo "***** rpi-serial-console installed *****"
 
 echo "***** Installing docker-cleanup-volumes script *****"
 wget -q https://raw.githubusercontent.com/chadoe/docker-cleanup-volumes/master/docker-cleanup-volumes.sh -O usr/local/bin/docker-cleanup-volumes
-chmod +x usr/local/bin/docker-cleanup-columes
+chmod +x usr/local/bin/docker-cleanup-volumes
 echo "***** docker-cleanup-volumes installed *****"
 
 echo "***** Installing HyprIoT docker *****"
