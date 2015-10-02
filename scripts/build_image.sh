@@ -134,6 +134,7 @@ iface eth0 inet6 auto
 
 allow-hotplug wlan0
 iface wlan0 inet dhcp
+pre-up /usr/bin/occi
 wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 iface default inet dhcp
 " > ${_NET_CONFIG_FILE}
