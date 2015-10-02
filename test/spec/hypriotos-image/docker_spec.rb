@@ -60,6 +60,18 @@ describe file('/etc/bash_completion.d/docker') do
   it { should be_file }
 end
 
+describe file('/usr/local/bin/rpi-serial-console') do
+  it { should be_file }
+  it { should be_mode 755 }
+  it { should be_owned_by 'root' }
+end
+
+describe file('/usr/local/bin/docker-cleanup-volumes') do
+  it { should be_file }
+  it { should be_mode 755 }
+  it { should be_owned_by 'root' }
+end
+
 describe command('docker -v') do
   its(:stdout) { should match /Docker version 1.8.2, build/ }
   its(:exit_status) { should eq 0 }
