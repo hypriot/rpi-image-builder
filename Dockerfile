@@ -16,3 +16,4 @@ bundle install
 
 ENTRYPOINT ["bin/rspec"]
 CMD ["spec/hypriotos-image"]
+#CMD ["spec/hypriotos-docker"]
