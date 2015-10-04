@@ -82,7 +82,7 @@ describe command('docker info') do
   its(:exit_status) { should eq 0 }
 end
 
-describe interface('eth0') do
+describe interface('lo') do
   it { should exist }
 end
 
