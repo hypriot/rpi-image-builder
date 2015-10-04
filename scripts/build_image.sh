@@ -397,8 +397,6 @@ chmod 755 root/firstboot.sh
 ######################################
 # enable login on serial console
 printf "# Spawn a getty on Raspberry Pi serial line\nT0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100\n" >> etc/inittab
-wget -q https://raw.githubusercontent.com/lurch/rpi-serial-console/master/rpi-serial-console -O usr/bin/rpi-serial-console
-chmod +x usr/bin/rpi-serial-console
 
 #######################################
 echo "#!/bin/bash
@@ -475,6 +473,16 @@ dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypri
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos-v7+_${KERNEL_VERSION}-hypriotos-v7+-2_armhf.deb
 echo "***** HyprIoT kernel headers installed *****"
 
+echo "***** Installing rpi-serial-console script *****"
+wget -q https://raw.githubusercontent.com/lurch/rpi-serial-console/master/rpi-serial-console -O usr/local/bin/rpi-serial-console
+chmod +x usr/local/bin/rpi-serial-console
+echo "***** rpi-serial-console installed *****"
+
+echo "***** Installing docker-cleanup-volumes script *****"
+wget -q https://raw.githubusercontent.com/chadoe/docker-cleanup-volumes/master/docker-cleanup-volumes.sh -O usr/local/bin/docker-cleanup-volumes
+chmod +x usr/local/bin/docker-cleanup-volumes
+echo "***** docker-cleanup-volumes installed *****"
+
 echo "***** Installing HyprIoT docker *****"
 dpkg -i /var/pkg/docker/deb/${DOCKER_DEB}
 echo "***** HyprIoT docker installed *****"
@@ -482,6 +490,10 @@ echo "***** HyprIoT docker installed *****"
 echo "***** Installing docker-compose *****"
 apt-get install -y docker-compose=${DOCKER_COMPOSE_VERSION}
 echo "***** HyprIoT docker-compose installed *****"
+
+echo "***** Installing docker-machine *****"
+apt-get install -y docker-machine=${DOCKER_MACHINE_VERSION}
+echo "***** HyprIoT docker-machine installed *****"
 
 echo "***** Copying Docker Swarm image *****"
 mkdir -p /var/hypriot

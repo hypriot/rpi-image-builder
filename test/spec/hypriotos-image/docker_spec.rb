@@ -60,6 +60,12 @@ describe file('/etc/bash_completion.d/docker') do
   it { should be_file }
 end
 
+describe file('/usr/local/bin/docker-cleanup-volumes') do
+  it { should be_file }
+  it { should be_mode 755 }
+  it { should be_owned_by 'root' }
+end
+
 describe command('docker -v') do
   its(:stdout) { should match /Docker version 1.8.2, build/ }
   its(:exit_status) { should eq 0 }
@@ -76,7 +82,7 @@ describe command('docker info') do
   its(:exit_status) { should eq 0 }
 end
 
-describe interface('eth0') do
+describe interface('lo') do
   it { should exist }
 end
 
