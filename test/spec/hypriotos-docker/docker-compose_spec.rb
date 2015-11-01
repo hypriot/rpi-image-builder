@@ -21,11 +21,6 @@ describe command('curl http://localhost') do
   its(:exit_status) { should eq 0 }
 end
 
-describe command('docker exec rpinodehaproxyexample_haproxy_1 -t ping -c 1 weba') do
-  its(:stdout) { should match /Hello from Node.js container/ }
-  its(:exit_status) { should eq 0 }
-end
-
 describe command('cd rpi-node-haproxy-example && docker-compose kill') do
   its(:exit_status) { should eq 0 }
 end
