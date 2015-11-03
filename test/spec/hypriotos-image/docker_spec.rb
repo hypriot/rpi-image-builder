@@ -6,7 +6,7 @@ end
 
 describe command('dpkg -l docker-hypriot') do
   its(:stdout) { should match /ii  docker-hypriot/ }
-  its(:stdout) { should match /1.8.2-1/ }
+  its(:stdout) { should match /1.9.0-1/ }
   its(:exit_status) { should eq 0 }
 end
 
@@ -67,13 +67,13 @@ describe file('/usr/local/bin/docker-cleanup-volumes') do
 end
 
 describe command('docker -v') do
-  its(:stdout) { should match /Docker version 1.8.2, build/ }
+  its(:stdout) { should match /Docker version 1.9.0, build/ }
   its(:exit_status) { should eq 0 }
 end
 
 describe command('docker version') do
-  its(:stdout) { should match /Client:. Version:      1.8.2. API version:  1.20/m }
-  its(:stdout) { should match /Server:. Version:      1.8.2. API version:  1.20/m }
+  its(:stdout) { should match /Client:. Version:      1.9.0. API version:  1.21/m }
+  its(:stdout) { should match /Server:. Version:      1.9.0. API version:  1.21/m }
   its(:exit_status) { should eq 0 }
 end
 
