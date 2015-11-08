@@ -20,3 +20,11 @@ describe command('docker-machine --version') do
   its(:stdout) { should match /0.4.1/m }
   its(:exit_status) { should eq 0 }
 end
+
+describe command('docker-machine create --help') do
+  its(:stdout) { should include("--hypriot-ip-address") }
+  its(:stdout) { should include("--hypriot-ssh-key") }
+  its(:stdout) { should include("--hypriot-ssh-port") }
+  its(:stdout) { should include("--hypriot-ssh-user") }
+  its(:exit_status) { should eq 0 }
+end
