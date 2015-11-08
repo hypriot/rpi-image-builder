@@ -392,7 +392,7 @@ systemctl start docker.service
 
 echo 'Import Docker Swarm image' >> /dev/kmsg
 docker load < /var/hypriot/swarm.tar.gz
-if (($? == 0)); then
+if ((\$? == 0)); then
   rm -f /var/hypriot/swarm.tar.gz
 fi
 
