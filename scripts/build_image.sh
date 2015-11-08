@@ -294,6 +294,11 @@ chmod +x usr/sbin/policy-rc.d
 # etc/apt/sources.list
 get_apt_sources_list > etc/apt/sources.list
 
+# create a default boot/config.txt file (details see http://elinux.org/RPiconfig)
+echo "
+hdmi_force_hotplug=1
+" > boot/config.txt
+
 # boot/cmdline.txt
 echo "+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 cgroup-enable=memory swapaccount=1 elevator=deadline rootwait console=ttyAMA0,115200 kgdboc=ttyAMA0,115200" > boot/cmdline.txt
 
