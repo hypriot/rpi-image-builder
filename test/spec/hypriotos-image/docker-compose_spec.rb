@@ -6,7 +6,7 @@ end
 
 describe command('dpkg -l docker-compose') do
   its(:stdout) { should match /ii  docker-compose/ }
-  its(:stdout) { should match /1.4.2-61/ }
+  its(:stdout) { should match /1.5.0-69/ }
   its(:exit_status) { should eq 0 }
 end
 
@@ -17,6 +17,6 @@ describe file('/usr/local/bin/docker-compose') do
 end
 
 describe command('docker-compose --version') do
-  its(:stdout) { should match /1.4.2/m }
+  its(:stdout) { should match /1.5.0/m }
   its(:exit_status) { should eq 0 }
 end
