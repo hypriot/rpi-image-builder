@@ -15,5 +15,6 @@ RUN gem install bundler && \
 bundle install
 
 ENTRYPOINT ["bin/rspec"]
+
 CMD ["spec/hypriotos-image"]
 #CMD ["spec/hypriotos-docker"]
