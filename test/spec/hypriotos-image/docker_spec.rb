@@ -6,7 +6,7 @@ end
 
 describe command('dpkg -l docker-hypriot') do
   its(:stdout) { should match /ii  docker-hypriot/ }
-  its(:stdout) { should match /1.9.0-1/ }
+  its(:stdout) { should match /1.9.0-2/ }
   its(:exit_status) { should eq 0 }
 end
 
