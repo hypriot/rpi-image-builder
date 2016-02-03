@@ -532,7 +532,7 @@ cp /var/pkg/gitdir/scripts/files/resize_root_partition /usr/local/bin/resize_roo
 chmod +x /usr/local/bin/resize_root_partition
 
 echo "***** Installing Hypriot Cluster Lab *****"
-apt-get install hypriot-cluster-lab
+apt-get install hypriot-cluster-lab vlan avahi-utils dnsmasq
 
 echo "***** Enabling password login for root *****"
 sed -i -e 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config

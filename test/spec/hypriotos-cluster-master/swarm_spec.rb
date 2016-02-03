@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe command('docker images hypriot/rpi-swarm') do
-  its(:stdout) { should match /hypriot\/rpi-swarm .*latest .*039c550f6208 / }
-  its(:exit_status) { should eq 0 }
+describe docker_image('hypriot/rpi-swarm:latest') do
+  it { should exist }
+  its(['Architecture']) { should eq 'arm' }
 end
 
 describe file('/var/hypriot/swarm.tar.gz') do
