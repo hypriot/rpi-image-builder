@@ -361,7 +361,12 @@ echo '  Generating new SSH host keys ...' >> /dev/kmsg
 dpkg-reconfigure openssh-server
 echo '  Reconfigured openssh-server' >> /dev/kmsg
 
+
 # Set locale
+sudo sed 's/# ${_LOCALES}.${_ENCODING} ${_ENCODING}/${_LOCALES}.${_ENCODING} ${_ENCODING}/g' -i /etc/locale.gen
+locale-gen ${_LOCALES}.${_ENCODING}
+update-locale LANG=${_LOCALES}.${_ENCODING}
+
 export LANGUAGE=${_LOCALES}.${_ENCODING}
 export LANG=${_LOCALES}.${_ENCODING}
 export LC_ALL=${_LOCALES}.${_ENCODING}
