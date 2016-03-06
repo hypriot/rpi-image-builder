@@ -6,7 +6,7 @@ end
 
 describe command('dpkg -l docker-hypriot') do
   its(:stdout) { should match /ii  docker-hypriot/ }
-  its(:stdout) { should match /1.9.0-2/ }
+  its(:stdout) { should match /1.10.2-1/ }
   its(:exit_status) { should eq 0 }
 end
 
@@ -37,19 +37,13 @@ end
 
 describe file('/var/lib/docker') do
   it { should be_directory }
-  it { should be_mode 700 }
+  it { should be_mode 701 }
   it { should be_owned_by 'root' }
 end
 
 describe file('/var/lib/docker/overlay') do
   it { should be_directory }
-  it { should be_mode 755 }
-  it { should be_owned_by 'root' }
-end
-
-describe file('/var/lib/docker/repositories-overlay') do
-  it { should be_file }
-  it { should be_mode 600 }
+  it { should be_mode 700 }
   it { should be_owned_by 'root' }
 end
 
@@ -67,13 +61,13 @@ describe file('/usr/local/bin/docker-cleanup-volumes') do
 end
 
 describe command('docker -v') do
-  its(:stdout) { should match /Docker version 1.9.0, build/ }
+  its(:stdout) { should match /Docker version 1.10.2, build/ }
   its(:exit_status) { should eq 0 }
 end
 
 describe command('docker version') do
-  its(:stdout) { should match /Client:. Version:      1.9.0. API version:  1.21/m }
-  its(:stdout) { should match /Server:. Version:      1.9.0. API version:  1.21/m }
+  its(:stdout) { should match /Client:. Version:      1.10.2. API version:  1.22/m }
+  its(:stdout) { should match /Server:. Version:      1.10.2. API version:  1.22/m }
   its(:exit_status) { should eq 0 }
 end
 
