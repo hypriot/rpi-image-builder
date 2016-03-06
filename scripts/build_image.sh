@@ -474,6 +474,10 @@ dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-bin_${KERNEL_DATETIME}
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/libraspberrypi-doc_${KERNEL_DATETIME}_armhf.deb
 echo "***** HyprIoT kernel installed *****"
 
+echo "***** Installing RPi3 bootfiles *****"
+wget -q http://downloads.hypriot.com/rpi3-bootfiles.tar.gz -O - | tar xvzf - -C /boot
+echo "***** RPi3 bootfiles installed *****"
+
 echo "***** Installing HyprIoT kernel headers *****"
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos+_${KERNEL_VERSION}-hypriotos+-1_armhf.deb
 dpkg -i /var/pkg/kernel/${KERNEL_DATETIME}/linux-headers-${KERNEL_VERSION}-hypriotos-v7+_${KERNEL_VERSION}-hypriotos-v7+-2_armhf.deb
