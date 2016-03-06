@@ -9,7 +9,7 @@ DOCKER_COMPOSE_VERSION=${DOCKER_COMPOSE_VERSION:="1.6.2-28"}
 DOCKER_MACHINE_VERSION=${DOCKER_MACHINE_VERSION:="0.4.1-72"}
 DOCKER_SWARM_VERSION=${DOCKER_SWARM_VERSION:="2015-11-04_c013888"}
 
-SD_CARD_SIZE="1500"        # "1500" = approx. 1.5 GB
+SD_CARD_SIZE="1700"        # "1700" = approx. 1.7 GB
 BOOT_PARTITION_SIZE="64"   # "64" = 64 MB
 
 _DEB_RELEASE="jessie"					# stable | testing | unstable | jessie | wheezy | squeeze, ...
