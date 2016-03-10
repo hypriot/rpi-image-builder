@@ -32,3 +32,4 @@ for pkg in $PACKAGES; do
 done
 
 aws s3 --region eu-central-1 cp s3://buildserver-production/docker-images/rpi-swarm/${DOCKER_SWARM_VERSION}/rpi-swarm.tar $BUILD_INPUTS/docker/swarm.tar.gz
+aws s3 --region eu-central-1 cp s3://buildserver-production/docker-images/rpi-consul/rpi-consul_${CONSUL_VERSION}.tar $BUILD_INPUTS/docker/consul.tar

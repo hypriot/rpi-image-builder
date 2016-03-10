@@ -404,6 +404,13 @@ if ((\$? == 0)); then
   rm -f /var/hypriot/swarm.tar.gz
 fi
 
+echo 'Import Consul image' >> /dev/kmsg
+sleep 5
+docker load < /var/hypriot/consul.tar
+if ((\$? == 0)); then
+  rm -f /var/hypriot/consul.tar
+fi
+
 " > root/firstboot.sh
 chmod 755 root/firstboot.sh
 
@@ -516,6 +523,11 @@ echo "***** Copying Docker Swarm image *****"
 mkdir -p /var/hypriot
 cp /var/pkg/docker/swarm.tar.gz /var/hypriot
 echo "***** Copying Docker Swarm finished *****"
+
+echo "***** Copying Consul image *****"
+mkdir -p /var/hypriot
+cp /var/pkg/docker/consul.tar /var/hypriot
+echo "***** Copying Consul finished *****"
 
 echo "***** Installing HyprIoT user=pi *****"
 useradd -m pi --group docker --shell /bin/bash
