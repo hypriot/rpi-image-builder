@@ -191,13 +191,13 @@ bootfs="${rootfs}/boot"
 BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
 # get branchname
-BRANCH_NAME="$(git branch | grep -v '*' | cut -c3-)"
+BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
 if [ "$BRANCH_NAME" == "master" ]; then
 TAG=""
 else
 TAG="-$BRANCH_NAME"
 fi
-IMAGE_NAME="${SETTINGS_PROFILE}-rpi-${BUILD_TIME}$TAG"
+IMAGE_NAME="${SETTINGS_PROFILE}${TAG}-rpi-${BUILD_TIME}"
 IMAGE_PATH="${BUILD_ENV}/images/${IMAGE_NAME}.img"
 
 BOOTFS_START=2048
