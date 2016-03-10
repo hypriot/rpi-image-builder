@@ -190,8 +190,15 @@ bootfs="${rootfs}/boot"
 
 BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
-IMAGE_PATH=""
-IMAGE_PATH="${BUILD_ENV}/images/${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img"
+# get branchname
+BRANCH_NAME="$(git branch | grep -v '*' | cut -c3-)"
+if [ "$BRANCH_NAME" == "master" ]; then
+TAG=""
+else
+TAG="-$BRANCH_NAME"
+fi
+IMAGE_NAME="${SETTINGS_PROFILE}-rpi-${BUILD_TIME}$TAG"
+IMAGE_PATH="${BUILD_ENV}/images/${IMAGE_NAME}.img"
 
 BOOTFS_START=2048
 BOOTFS_SIZE=$(expr ${BOOT_PARTITION_SIZE} \* 2048)
@@ -635,7 +642,7 @@ mkdir -p $BUILD_RESULTS
 cp $IMAGE_PATH $BUILD_RESULTS/
 
 echo "### create sha256 checksum"
-cd $BUILD_RESULTS && shasum -a 256 ${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img.zip > ${SETTINGS_PROFILE}-rpi-${BUILD_TIME}.img.zip.sha256
+cd $BUILD_RESULTS && shasum -a 256 ${IMAGE_NAME}.img.zip > ${IMAGE_NAME}.img.zip.sha256
 
 echo "### Created image ${IMAGE_PATH}."
 
