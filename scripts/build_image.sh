@@ -33,6 +33,9 @@ mkdir -p ${BUILD_INPUTS}/kernel/$KERNEL_DATETIME
 touch ${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt
 KERNEL_COMMIT=${KERNEL_COMMIT:=$(<${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt)}
 
+# get branchname
+BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+
 echo "###############"
 echo "### Build results will go to $BUILD_RESULTS"
 
@@ -190,8 +193,6 @@ bootfs="${rootfs}/boot"
 
 BUILD_TIME="$(date +%Y%m%d-%H%M%S)"
 
-# get branchname
-BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
 if [ "$BRANCH_NAME" == "master" ]; then
 TAG=""
 else
