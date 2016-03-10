@@ -34,7 +34,8 @@ touch ${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt
 KERNEL_COMMIT=${KERNEL_COMMIT:=$(<${BUILD_INPUTS}/kernel/${KERNEL_DATETIME}/kernel-commit.txt)}
 
 # get branchname
-BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+#BRANCH_NAME="$(git rev-parse --abbrev-ref HEAD)"
+BRANCH_NAME="$(git branch | grep -v '*' | cut -c3-)"
 
 echo "###############"
 echo "### Build results will go to $BUILD_RESULTS"
